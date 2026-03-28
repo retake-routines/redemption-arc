@@ -1,4 +1,4 @@
-# HabitPal - Habit Formation Assistant
+# redemption-arc (Habit Formation Assistant)
 
 [![Backend CI](https://github.com/retake-routines/redemption-arc/actions/workflows/backend.yml/badge.svg)](https://github.com/retake-routines/redemption-arc/actions/workflows/backend.yml)
 [![Frontend CI](https://github.com/retake-routines/redemption-arc/actions/workflows/frontend.yml/badge.svg)](https://github.com/retake-routines/redemption-arc/actions/workflows/frontend.yml)

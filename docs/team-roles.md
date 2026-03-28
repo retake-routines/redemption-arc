@@ -110,16 +110,16 @@ main
 
 ### Rules
 
-1. **`main` is the stable branch.** It must always build and pass all tests.
-2. **All work happens on feature branches.** Branch from `main`, merge back to `main`.
+1. **`master` is the stable branch.** It must always build and pass all tests.
+2. **All work happens on feature branches.** Branch from `master`, merge back to `master`.
 3. **Branch naming convention:** `type/short-description`
    - `feature/` -- new functionality
    - `fix/` -- bug fixes
    - `chore/` -- maintenance, CI, docs, refactoring
    - `hotfix/` -- urgent production fixes
-4. **Never push directly to `main`.** All changes go through pull requests.
+4. **Never push directly to `master`.** All changes go through pull requests.
 5. **Keep branches short-lived.** Aim to merge within 1-3 days to minimize conflicts.
-6. **Rebase or merge from `main` regularly** to stay up to date.
+6. **Rebase or merge from `master` regularly** to stay up to date.
 
 ### Branch lifecycle
 
