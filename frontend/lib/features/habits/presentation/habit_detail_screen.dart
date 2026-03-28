@@ -50,9 +50,15 @@ class HabitDetailScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      habit.name,
-                      style: Theme.of(context).textTheme.headlineSmall,
+                    Hero(
+                      tag: 'habit-title-${habit.id}',
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Text(
+                          habit.name,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
                     ),
                     if (habit.description.isNotEmpty) ...[
                       const SizedBox(height: 8),

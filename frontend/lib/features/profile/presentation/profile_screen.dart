@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitpal_frontend/features/auth/domain/auth_provider.dart';
 import 'package:habitpal_frontend/features/profile/domain/profile_provider.dart';
+import 'package:habitpal_frontend/shared/widgets/platform_widgets.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -32,21 +33,25 @@ class ProfileScreen extends ConsumerWidget {
           Card(
             child: Column(
               children: [
-                SwitchListTile(
+                ListTile(
+                  leading: const Icon(Icons.dark_mode),
                   title: const Text('Dark Mode'),
-                  secondary: const Icon(Icons.dark_mode),
-                  value: profile.isDarkMode,
-                  onChanged: (_) {
-                    ref.read(profileProvider.notifier).toggleDarkMode();
-                  },
+                  trailing: AdaptiveSwitch(
+                    value: profile.isDarkMode,
+                    onChanged: (_) {
+                      ref.read(profileProvider.notifier).toggleDarkMode();
+                    },
+                  ),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.language),
                   title: const Text('Language'),
-                  trailing: Text(profile.locale == 'en' ? 'English' : 'Russian'),
+                  trailing:
+                      Text(profile.locale == 'en' ? 'English' : 'Russian'),
                   onTap: () {
-                    final newLocale = profile.locale == 'en' ? 'ru' : 'en';
+                    final newLocale =
+                        profile.locale == 'en' ? 'ru' : 'en';
                     ref.read(profileProvider.notifier).setLocale(newLocale);
                   },
                 ),
@@ -66,9 +71,18 @@ class ProfileScreen extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.error,
                 ),
               ),
-              onTap: () {
-                ref.read(authStateProvider.notifier).logout();
-                context.go('/login');
+              onTap: () async {
+                final confirmed = await showAdaptiveConfirmDialog<bool>(
+                  context: context,
+                  title: 'Logout',
+                  content: 'Are you sure you want to logout?',
+                  confirmText: 'Logout',
+                  isDestructive: true,
+                );
+                if (confirmed == true && context.mounted) {
+                  ref.read(authStateProvider.notifier).logout();
+                  context.go('/login');
+                }
               },
             ),
           ),

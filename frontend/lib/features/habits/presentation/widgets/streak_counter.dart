@@ -15,11 +15,12 @@ class StreakCounter extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: _StreakItem(
+              child: _AnimatedStreakItem(
                 icon: Icons.local_fire_department,
                 iconColor: AppColors.streak,
                 label: 'Current Streak',
-                value: '${streak.currentStreak} days',
+                targetValue: streak.currentStreak,
+                suffix: 'days',
               ),
             ),
             Container(
@@ -28,11 +29,12 @@ class StreakCounter extends StatelessWidget {
               color: Theme.of(context).dividerColor,
             ),
             Expanded(
-              child: _StreakItem(
+              child: _AnimatedStreakItem(
                 icon: Icons.emoji_events,
                 iconColor: AppColors.streakGold,
                 label: 'Longest Streak',
-                value: '${streak.longestStreak} days',
+                targetValue: streak.longestStreak,
+                suffix: 'days',
               ),
             ),
           ],
@@ -42,17 +44,19 @@ class StreakCounter extends StatelessWidget {
   }
 }
 
-class _StreakItem extends StatelessWidget {
+class _AnimatedStreakItem extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final String label;
-  final String value;
+  final int targetValue;
+  final String suffix;
 
-  const _StreakItem({
+  const _AnimatedStreakItem({
     required this.icon,
     required this.iconColor,
     required this.label,
-    required this.value,
+    required this.targetValue,
+    required this.suffix,
   });
 
   @override
@@ -61,11 +65,18 @@ class _StreakItem extends StatelessWidget {
       children: [
         Icon(icon, color: iconColor, size: 32),
         const SizedBox(height: 8),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0, end: targetValue.toDouble()),
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Text(
+              '${value.toInt()} $suffix',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            );
+          },
         ),
         const SizedBox(height: 4),
         Text(

@@ -69,12 +69,15 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
                     itemCount: habitsState.habits.length,
                     itemBuilder: (context, index) {
                       final habit = habitsState.habits[index];
-                      return HabitCard(
-                        habit: habit,
-                        onTap: () => context.go('/habits/${habit.id}'),
-                        onComplete: () => ref
-                            .read(habitsProvider.notifier)
-                            .completeHabit(habit.id),
+                      return _StaggeredListItem(
+                        index: index,
+                        child: HabitCard(
+                          habit: habit,
+                          onTap: () => context.go('/habits/${habit.id}'),
+                          onComplete: () => ref
+                              .read(habitsProvider.notifier)
+                              .completeHabit(habit.id),
+                        ),
                       );
                     },
                   ),
@@ -114,6 +117,44 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Animates a list item with a staggered fade + slide effect.
+class _StaggeredListItem extends StatelessWidget {
+  final int index;
+  final Widget child;
+
+  const _StaggeredListItem({
+    required this.index,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final delay = Duration(milliseconds: 80 * index);
+    final totalDuration = const Duration(milliseconds: 400) + delay;
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: totalDuration,
+      curve: Curves.easeOutCubic,
+      builder: (context, value, _) {
+        // Calculate the effective progress accounting for stagger delay
+        final delayFraction =
+            delay.inMilliseconds / totalDuration.inMilliseconds;
+        final effectiveValue =
+            ((value - delayFraction) / (1.0 - delayFraction)).clamp(0.0, 1.0);
+
+        return Opacity(
+          opacity: effectiveValue,
+          child: Transform.translate(
+            offset: Offset(0, 20 * (1 - effectiveValue)),
+            child: child,
+          ),
+        );
+      },
     );
   }
 }
