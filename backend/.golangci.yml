@@ -1,0 +1,48 @@
+run:
+  timeout: 3m
+  go: "1.23"
+
+linters:
+  enable:
+    - errcheck
+    - gofmt
+    - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - revive
+    - staticcheck
+    - unused
+
+linters-settings:
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+      - name: blank-imports
+        severity: warning
+      - name: context-as-argument
+        severity: error
+      - name: error-return
+        severity: warning
+      - name: error-naming
+        severity: warning
+      - name: increment-decrement
+        severity: warning
+      - name: var-naming
+        severity: warning
+      - name: unexported-return
+        severity: warning
+
+  misspell:
+    locale: US
+
+  goimports:
+    local-prefixes: habitpal-backend
+
+issues:
+  max-issues-per-linter: 50
+  max-same-issues: 10
+  exclude-dirs:
+    - docs
