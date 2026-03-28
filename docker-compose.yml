@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: habitpal
+      POSTGRES_PASSWORD: habitpal_dev
+      POSTGRES_DB: habitpal
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habitpal -d habitpal"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - habitpal-network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://habitpal:habitpal_dev@db:5432/habitpal?sslmode=disable
+      JWT_SECRET: dev-secret-change-in-production
+      JWT_EXPIRATION_HOURS: "24"
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+    networks:
+      - habitpal-network
+    restart: unless-stopped
+
+  # frontend:
+  #   Flutter web can be served via nginx or run locally.
+  #   For the dev workflow, run `flutter run -d chrome` from the frontend/ directory
+  #   instead of building inside Docker.
+
+networks:
+  habitpal-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
