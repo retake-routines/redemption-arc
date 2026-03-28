@@ -20,7 +20,16 @@ func NewAuthHandler(authService *service.AuthService) *AuthHandler {
 	return &AuthHandler{AuthService: authService}
 }
 
-// HandleRegister creates a new user account and returns a JWT token.
+// HandleRegister godoc
+// @Summary Register a new user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body models.RegisterRequest true "Registration data"
+// @Success 201 {object} models.AuthResponse
+// @Failure 400 {object} map[string]string
+// @Failure 409 {object} map[string]string
+// @Router /auth/register [post]
 func (h *AuthHandler) HandleRegister(c *gin.Context) {
 	var req models.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -46,7 +55,16 @@ func (h *AuthHandler) HandleRegister(c *gin.Context) {
 	c.JSON(http.StatusCreated, resp)
 }
 
-// HandleLogin authenticates a user and returns a JWT token.
+// HandleLogin godoc
+// @Summary Login with email and password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body models.LoginRequest true "Login credentials"
+// @Success 200 {object} models.AuthResponse
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Router /auth/login [post]
 func (h *AuthHandler) HandleLogin(c *gin.Context) {
 	var req models.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

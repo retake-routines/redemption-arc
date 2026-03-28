@@ -21,7 +21,17 @@ func NewHabitHandler(habitService *service.HabitService) *HabitHandler {
 	return &HabitHandler{HabitService: habitService}
 }
 
-// HandleCreate creates a new habit for the authenticated user.
+// HandleCreate godoc
+// @Summary Create a new habit
+// @Tags habits
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body models.HabitCreateRequest true "Habit data"
+// @Success 201 {object} models.Habit
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Router /habits [post]
 func (h *HabitHandler) HandleCreate(c *gin.Context) {
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
@@ -49,7 +59,14 @@ func (h *HabitHandler) HandleCreate(c *gin.Context) {
 	c.JSON(http.StatusCreated, habit)
 }
 
-// HandleGetAll returns all habits for the authenticated user.
+// HandleGetAll godoc
+// @Summary List all habits for the authenticated user
+// @Tags habits
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} models.HabitListResponse
+// @Failure 401 {object} map[string]string
+// @Router /habits [get]
 func (h *HabitHandler) HandleGetAll(c *gin.Context) {
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
@@ -72,7 +89,16 @@ func (h *HabitHandler) HandleGetAll(c *gin.Context) {
 	})
 }
 
-// HandleGetByID returns a single habit by ID for the authenticated user.
+// HandleGetByID godoc
+// @Summary Get a habit by ID
+// @Tags habits
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Habit ID"
+// @Success 200 {object} models.Habit
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /habits/{id} [get]
 func (h *HabitHandler) HandleGetByID(c *gin.Context) {
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
@@ -99,7 +125,19 @@ func (h *HabitHandler) HandleGetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, habit)
 }
 
-// HandleUpdate partially updates a habit for the authenticated user.
+// HandleUpdate godoc
+// @Summary Update a habit
+// @Tags habits
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Habit ID"
+// @Param request body models.HabitUpdateRequest true "Fields to update"
+// @Success 200 {object} models.Habit
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /habits/{id} [put]
 func (h *HabitHandler) HandleUpdate(c *gin.Context) {
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
@@ -141,7 +179,15 @@ func (h *HabitHandler) HandleUpdate(c *gin.Context) {
 	c.JSON(http.StatusOK, habit)
 }
 
-// HandleDelete deletes a habit for the authenticated user.
+// HandleDelete godoc
+// @Summary Delete a habit
+// @Tags habits
+// @Security BearerAuth
+// @Param id path string true "Habit ID"
+// @Success 204 "No Content"
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /habits/{id} [delete]
 func (h *HabitHandler) HandleDelete(c *gin.Context) {
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {

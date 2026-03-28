@@ -26,7 +26,18 @@ func NewCompletionHandler(completionRepo repository.CompletionRepository, streak
 	}
 }
 
-// HandleComplete records a new habit completion.
+// HandleComplete godoc
+// @Summary Record a habit completion
+// @Tags completions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body models.CompletionCreateRequest true "Completion data"
+// @Success 201 {object} models.HabitCompletion
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 409 {object} map[string]string
+// @Router /completions [post]
 func (h *CompletionHandler) HandleComplete(c *gin.Context) {
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
@@ -62,7 +73,15 @@ func (h *CompletionHandler) HandleComplete(c *gin.Context) {
 	c.JSON(http.StatusCreated, completion)
 }
 
-// HandleUncomplete deletes a completion record.
+// HandleUncomplete godoc
+// @Summary Delete a completion record
+// @Tags completions
+// @Security BearerAuth
+// @Param id path string true "Completion ID"
+// @Success 204 "No Content"
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /completions/{id} [delete]
 func (h *CompletionHandler) HandleUncomplete(c *gin.Context) {
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
@@ -89,7 +108,15 @@ func (h *CompletionHandler) HandleUncomplete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// HandleGetCompletions returns completions, optionally filtered by habit_id.
+// HandleGetCompletions godoc
+// @Summary List completions, optionally filtered by habit_id
+// @Tags completions
+// @Produce json
+// @Security BearerAuth
+// @Param habit_id query string false "Filter by habit ID"
+// @Success 200 {object} models.CompletionListResponse
+// @Failure 401 {object} map[string]string
+// @Router /completions [get]
 func (h *CompletionHandler) HandleGetCompletions(c *gin.Context) {
 	userID, ok := middleware.GetUserIDFromContext(c)
 	if !ok {
@@ -135,7 +162,16 @@ func (h *CompletionHandler) HandleGetCompletions(c *gin.Context) {
 	})
 }
 
-// HandleGetStreak returns the current and longest streak for a habit.
+// HandleGetStreak godoc
+// @Summary Get streak info for a habit
+// @Tags completions
+// @Produce json
+// @Security BearerAuth
+// @Param habitId path string true "Habit ID"
+// @Success 200 {object} models.Streak
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Router /completions/streak/{habitId} [get]
 func (h *CompletionHandler) HandleGetStreak(c *gin.Context) {
 	habitID := c.Param("habitId")
 	if habitID == "" {
