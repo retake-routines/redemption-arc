@@ -48,24 +48,40 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LoginScreen(),
+          transitionsBuilder: _fadeTransition,
+        ),
       ),
       GoRoute(
         path: '/register',
         name: 'register',
-        builder: (context, state) => const RegisterScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const RegisterScreen(),
+          transitionsBuilder: _fadeTransition,
+        ),
       ),
       GoRoute(
         path: '/habits',
         name: 'habits',
-        builder: (context, state) => const HabitsScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const HabitsScreen(),
+          transitionsBuilder: _fadeTransition,
+        ),
         routes: [
           GoRoute(
             path: ':id',
             name: 'habit-detail',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final id = state.pathParameters['id'] ?? '';
-              return HabitDetailScreen(habitId: id);
+              return CustomTransitionPage(
+                key: state.pageKey,
+                child: HabitDetailScreen(habitId: id),
+                transitionsBuilder: _slideTransition,
+              );
             },
           ),
         ],
@@ -73,13 +89,46 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/statistics',
         name: 'statistics',
-        builder: (context, state) => const StatisticsScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const StatisticsScreen(),
+          transitionsBuilder: _fadeTransition,
+        ),
       ),
       GoRoute(
         path: '/profile',
         name: 'profile',
-        builder: (context, state) => const ProfileScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ProfileScreen(),
+          transitionsBuilder: _fadeTransition,
+        ),
       ),
     ],
   );
 });
+
+Widget _fadeTransition(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  return FadeTransition(opacity: animation, child: child);
+}
+
+Widget _slideTransition(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  final offsetAnimation = Tween<Offset>(
+    begin: const Offset(1, 0),
+    end: Offset.zero,
+  ).animate(CurvedAnimation(
+    parent: animation,
+    curve: Curves.easeInOut,
+  ));
+  return SlideTransition(position: offsetAnimation, child: child);
+}
