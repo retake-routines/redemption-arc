@@ -1,8 +1,8 @@
 # HabitPal - Habit Formation Assistant
 
-[![Backend CI](../../actions/workflows/backend.yml/badge.svg)](../../actions/workflows/backend.yml)
-[![Frontend CI](../../actions/workflows/frontend.yml/badge.svg)](../../actions/workflows/frontend.yml)
-[![Deploy to GitHub Pages](../../actions/workflows/deploy.yml/badge.svg)](../../actions/workflows/deploy.yml)
+[![Backend CI](https://github.com/retake-routines/redemption-arc/actions/workflows/backend.yml/badge.svg)](https://github.com/retake-routines/redemption-arc/actions/workflows/backend.yml)
+[![Frontend CI](https://github.com/retake-routines/redemption-arc/actions/workflows/frontend.yml/badge.svg)](https://github.com/retake-routines/redemption-arc/actions/workflows/frontend.yml)
+[![Deploy to GitHub Pages](https://github.com/retake-routines/redemption-arc/actions/workflows/deploy.yml/badge.svg)](https://github.com/retake-routines/redemption-arc/actions/workflows/deploy.yml)
 
 HabitPal is a cross-platform habit tracking application that helps users build and maintain positive daily routines. Users can create habits with customizable frequencies, track completions, monitor streaks, and visualize their progress over time. The application features a Go backend with a RESTful API, a Flutter mobile/web frontend, and a PostgreSQL database, all orchestrated with Docker.
 
