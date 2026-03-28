@@ -12,25 +12,42 @@ graph LR
         A[Flutter App<br/>Mobile / Web]
     end
 
-    subgraph Backend
-        B[REST API<br/>Go / Gin<br/>:8080]
+    subgraph "API Gateway :8080"
+        GW[Gateway<br/>Reverse Proxy]
+    end
+
+    subgraph "Microservices"
+        AS[Auth Service<br/>:8081 HTTP<br/>:9091 gRPC]
+        HS[Habit Service<br/>:8082 HTTP]
+        CS[Completion Service<br/>:8083 HTTP]
     end
 
     subgraph Database
-        C[(PostgreSQL 16<br/>:5432)]
+        DB[(PostgreSQL 16<br/>:5432)]
     end
 
-    A -- "HTTP/JSON<br/>/api/v1/*" --> B
-    B -- "SQL<br/>pgx pool" --> C
+    A -- "HTTP/JSON<br/>/api/v1/*" --> GW
+    GW -- "/auth/*" --> AS
+    GW -- "/habits/*" --> HS
+    GW -- "/completions/*" --> CS
+    HS -- "gRPC<br/>ValidateToken" --> AS
+    CS -- "gRPC<br/>ValidateToken" --> AS
+    AS -- "SQL" --> DB
+    HS -- "SQL" --> DB
+    CS -- "SQL" --> DB
 ```
 
-**Communication protocol:** The Flutter app communicates with the backend exclusively via REST (JSON over HTTP). There is no WebSocket or gRPC channel between client and server. The backend communicates with PostgreSQL using the `pgx` driver through a connection pool.
+**Communication protocols:**
+- **Client → Gateway:** REST (JSON over HTTP). The Flutter app talks only to the gateway on port 8080.
+- **Gateway → Services:** HTTP reverse proxy. The gateway routes requests to the correct microservice.
+- **Service → Service (gRPC):** The Habit and Completion services validate JWT tokens by calling the Auth Service's `ValidateToken` RPC over gRPC (port 9091).
+- **Services → PostgreSQL:** All three services connect to the same database via `pgx` connection pool.
 
 ---
 
 ## 2. Backend Layer Diagram
 
-The backend follows a strict layered architecture. Each layer only depends on the layer directly below it. Dependencies are injected through constructors, making every layer independently testable.
+Each microservice follows a strict layered architecture internally. Dependencies are injected through constructors, making every layer independently testable.
 
 ```mermaid
 graph TD
@@ -44,6 +61,17 @@ graph TD
     S -. reads/writes .-> M
     Repo -. reads/writes .-> M
 ```
+
+### Microservice boundaries
+
+| Service | Entrypoint | HTTP Port | gRPC Port | Owns |
+|---------|-----------|-----------|-----------|------|
+| **Auth** | `cmd/auth-service/` | 8081 | 9091 | Registration, login, JWT, user CRUD |
+| **Habit** | `cmd/habit-service/` | 8082 | — | Habit CRUD |
+| **Completion** | `cmd/completion-service/` | 8083 | — | Completions, streaks |
+| **Gateway** | `cmd/gateway/` | 8080 | — | Reverse proxy, CORS, Swagger UI |
+
+All services share `internal/` packages (models, repository, service, handler) — the split is at the entrypoint level. The Auth Service additionally exposes a gRPC endpoint (`ValidateToken`) used by other services instead of local JWT validation.
 
 | Layer | Package | Responsibility |
 |-------|---------|---------------|
@@ -121,14 +149,15 @@ POST /api/v1/auth/register
 ### 4.2 Habit Creation
 
 ```
-Flutter                      Go Backend                   PostgreSQL
-──────                       ──────────                   ──────────
+Flutter           Gateway        Habit Service      Auth Service (gRPC)   PostgreSQL
+──────            ───────        ─────────────      ───────────────────   ──────────
 POST /api/v1/habits
-  Authorization: Bearer <jwt>
-  { title, description,    →  JWTAuthMiddleware
-    frequency_type,             ├─ Validate token
-    frequency_value }           └─ Set userID in context
-                            →  HabitHandler.HandleCreate
+  Authorization:
+  Bearer <jwt>  → proxy →       GRPCAuthMiddleware
+                                  ├─ ValidateToken(jwt) → validates JWT
+                                  │                      ← { user_id, valid: true }
+                                  └─ Set userID in context
+                                HabitHandler.HandleCreate
                                 ├─ Read userID from context
                                 ├─ Bind JSON to HabitCreateRequest
                                 ├─ HabitService.Create(userID, req)
@@ -179,7 +208,8 @@ sequenceDiagram
     Note over App: Subsequent app opens
     App->>App: Read token from SharedPreferences
     App->>API: GET /api/v1/habits<br/>Authorization: Bearer <token>
-    API->>API: JWTAuthMiddleware validates token
+    API->>API: Gateway proxies to Habit Service
+    API->>API: GRPCAuthMiddleware calls Auth Service ValidateToken
     API->>DB: SELECT * FROM habits WHERE user_id = ...
     DB-->>API: habit rows
     API-->>App: 200 {habits: [...]}
