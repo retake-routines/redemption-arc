@@ -32,6 +32,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isOnRegister = state.matchedLocation == '/register';
       final isOnAuthPage = isOnLogin || isOnRegister;
 
+      // Still checking stored token — don't redirect yet
+      if (authState.status == AuthStatus.initial) {
+        return null;
+      }
+
       // Not authenticated and trying to access a protected route
       if (!isAuthenticated && !isOnAuthPage) {
         return '/login';
