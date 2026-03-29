@@ -111,9 +111,11 @@ final authStateProvider =
   final repository = ref.read(authRepositoryProvider);
   final notifier = AuthNotifier(repository);
 
-  // Register the 401 callback so the network layer can trigger logout
-  // without a circular import dependency.
-  ref.read(onUnauthorizedProvider.notifier).state = notifier.logout;
+  // Defer setting the 401 callback to avoid modifying another provider
+  // during initialization (Riverpod disallows this).
+  Future.microtask(() {
+    ref.read(onUnauthorizedProvider.notifier).state = notifier.logout;
+  });
 
   return notifier;
 });
