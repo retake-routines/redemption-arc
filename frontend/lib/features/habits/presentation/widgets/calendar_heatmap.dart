@@ -11,6 +11,11 @@ class CalendarHeatmap extends StatelessWidget {
     this.weeksToShow = 16,
   });
 
+  static const double _dayLabelWidth = 18.0;
+  static const double _cellGap = 2.0;
+  static const double _monthLabelHeight = 14.0;
+  static const double _monthLabelSpacing = 4.0;
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -29,89 +34,128 @@ class CalendarHeatmap extends StatelessWidget {
       Duration(days: (startDate.weekday - 1) % 7),
     );
 
-    final dayLabels = ['M', '', 'W', '', 'F', '', ''];
+    final actualWeeks =
+        ((today.difference(adjustedStart).inDays + 1) / 7).ceil();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Month labels row
-        _buildMonthLabels(context, adjustedStart, today),
-        const SizedBox(height: 4),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Day-of-week labels
-            Column(
-              children: List.generate(7, (i) {
-                return SizedBox(
-                  height: 14,
-                  width: 16,
-                  child: Text(
-                    dayLabels[i],
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontSize: 9,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withAlpha(128),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableGridWidth =
+            constraints.maxWidth - _dayLabelWidth - _cellGap;
+        final cellSize = ((availableGridWidth - (actualWeeks - 1) * _cellGap) /
+                actualWeeks)
+            .clamp(6.0, 14.0);
+
+        final gridHeight = 7 * cellSize + 6 * _cellGap;
+        final totalHeight = _monthLabelHeight + _monthLabelSpacing + gridHeight;
+
+        return SizedBox(
+          height: totalHeight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Month labels row
+              _buildMonthLabels(
+                context,
+                adjustedStart,
+                today,
+                actualWeeks,
+                cellSize,
+              ),
+              SizedBox(height: _monthLabelSpacing),
+              // Grid area
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Day-of-week labels
+                  _buildDayLabels(context, cellSize),
+                  SizedBox(width: _cellGap),
+                  // Heatmap grid: 7 rows, each with N cells
+                  Expanded(
+                    child: Column(
+                      children: List.generate(7, (dayOfWeek) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            top: dayOfWeek > 0 ? _cellGap : 0,
+                          ),
+                          child: Row(
+                            children: List.generate(actualWeeks, (weekIndex) {
+                              final date = adjustedStart.add(
+                                Duration(days: weekIndex * 7 + dayOfWeek),
+                              );
+                              final isAfterToday = date.isAfter(today);
+                              final isCompleted =
+                                  !isAfterToday && completedSet.contains(date);
+
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  left: weekIndex > 0 ? _cellGap : 0,
+                                ),
+                                child:
+                                    isAfterToday
+                                        ? SizedBox(
+                                          width: cellSize,
+                                          height: cellSize,
+                                        )
+                                        : Tooltip(
+                                          message:
+                                              '${date.day}/${date.month}/${date.year}'
+                                              '${isCompleted ? ' \u2713' : ''}',
+                                          child: Container(
+                                            width: cellSize,
+                                            height: cellSize,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  isCompleted
+                                                      ? AppColors.heatmapLevel3
+                                                      : (isDark
+                                                          ? AppColors
+                                                              .heatmapEmptyDark
+                                                          : AppColors
+                                                              .heatmapEmpty),
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
+                                            ),
+                                          ),
+                                        ),
+                              );
+                            }),
+                          ),
+                        );
+                      }),
                     ),
                   ),
-                );
-              }),
-            ),
-            const SizedBox(width: 2),
-            // Heatmap grid
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final actualWeeks =
-                      ((today.difference(adjustedStart).inDays + 1) / 7).ceil();
-                  final cellSize = ((constraints.maxWidth -
-                              (actualWeeks - 1) * 2) /
-                          actualWeeks)
-                      .clamp(6.0, 14.0);
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-                  return Wrap(
-                    direction: Axis.vertical,
-                    spacing: 2,
-                    runSpacing: 2,
-                    children: List.generate(actualWeeks * 7, (index) {
-                      final weekIndex = index ~/ 7;
-                      final dayIndex = index % 7;
-                      final date = adjustedStart.add(
-                        Duration(days: weekIndex * 7 + dayIndex),
-                      );
+  Widget _buildDayLabels(BuildContext context, double cellSize) {
+    final dayLabels = ['M', '', 'W', '', 'F', '', ''];
+    final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      fontSize: 9,
+      color: Theme.of(context).colorScheme.onSurface.withAlpha(128),
+    );
 
-                      if (date.isAfter(today)) {
-                        return SizedBox(width: cellSize, height: cellSize);
-                      }
-
-                      final isCompleted = completedSet.contains(date);
-
-                      return Tooltip(
-                        message:
-                            '${date.day}/${date.month}/${date.year}${isCompleted ? ' ✓' : ''}',
-                        child: Container(
-                          width: cellSize,
-                          height: cellSize,
-                          decoration: BoxDecoration(
-                            color:
-                                isCompleted
-                                    ? AppColors.heatmapLevel3
-                                    : (isDark
-                                        ? AppColors.heatmapEmptyDark
-                                        : AppColors.heatmapEmpty),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      );
-                    }),
-                  );
-                },
+    return SizedBox(
+      width: _dayLabelWidth,
+      child: Column(
+        children: List.generate(7, (i) {
+          return Padding(
+            padding: EdgeInsets.only(top: i > 0 ? _cellGap : 0),
+            child: SizedBox(
+              height: cellSize,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(dayLabels[i], style: labelStyle),
               ),
             ),
-          ],
-        ),
-      ],
+          );
+        }),
+      ),
     );
   }
 
@@ -119,6 +163,8 @@ class CalendarHeatmap extends StatelessWidget {
     BuildContext context,
     DateTime start,
     DateTime today,
+    int actualWeeks,
+    double cellSize,
   ) {
     final months = [
       'Jan',
@@ -135,30 +181,33 @@ class CalendarHeatmap extends StatelessWidget {
       'Dec',
     ];
 
+    final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      fontSize: 9,
+      color: Theme.of(context).colorScheme.onSurface.withAlpha(128),
+    );
+
+    // Build positioned month labels
     final labels = <Widget>[];
     final seenMonths = <int>{};
-    var current = start;
 
-    while (!current.isAfter(today)) {
-      if (!seenMonths.contains(current.month)) {
-        seenMonths.add(current.month);
+    for (int week = 0; week < actualWeeks; week++) {
+      final weekStart = start.add(Duration(days: week * 7));
+      if (!weekStart.isAfter(today) && !seenMonths.contains(weekStart.month)) {
+        seenMonths.add(weekStart.month);
+        final left = _dayLabelWidth + _cellGap + week * (cellSize + _cellGap);
         labels.add(
-          Text(
-            months[current.month - 1],
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: 9,
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(128),
-            ),
+          Positioned(
+            left: left,
+            top: 0,
+            child: Text(months[weekStart.month - 1], style: labelStyle),
           ),
         );
-        labels.add(const SizedBox(width: 8));
       }
-      current = current.add(const Duration(days: 7));
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 18),
-      child: Row(children: labels),
+    return SizedBox(
+      height: _monthLabelHeight,
+      child: ClipRect(child: Stack(children: labels)),
     );
   }
 }

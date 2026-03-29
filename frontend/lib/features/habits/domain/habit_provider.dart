@@ -94,12 +94,16 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
   }
 
   /// Records a completion for a habit and refreshes habits.
-  Future<void> completeHabit(String habitId) async {
+  /// Returns the new current streak value, or null on failure.
+  Future<int?> completeHabit(String habitId, {String? note}) async {
     try {
-      await _repository.completeHabit(habitId);
+      await _repository.completeHabit(habitId, note: note);
       await loadHabits();
+      final habit = state.habits.where((h) => h.id == habitId).firstOrNull;
+      return habit?.streak.currentStreak;
     } catch (e) {
       state = state.copyWith(errorMessage: _friendlyError(e));
+      return null;
     }
   }
 
