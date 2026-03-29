@@ -39,9 +39,14 @@ CREATE TABLE IF NOT EXISTS habit_completions (
     note TEXT NOT NULL DEFAULT ''
 );
 
+-- Helper function for immutable date extraction (required for index expressions)
+CREATE OR REPLACE FUNCTION completion_date(ts TIMESTAMPTZ) RETURNS DATE AS $$
+  SELECT ts::date;
+$$ LANGUAGE SQL IMMUTABLE;
+
 -- Prevent duplicate completions for the same habit on the same date
 CREATE UNIQUE INDEX IF NOT EXISTS idx_completions_habit_date
-    ON habit_completions (habit_id, (completed_at::date));
+    ON habit_completions (habit_id, completion_date(completed_at));
 
 CREATE INDEX IF NOT EXISTS idx_completions_habit_id ON habit_completions(habit_id);
 CREATE INDEX IF NOT EXISTS idx_completions_user_id ON habit_completions(user_id);
