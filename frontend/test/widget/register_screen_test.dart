@@ -19,24 +19,32 @@ void main() {
   }
 
   group('RegisterScreen', () {
-    testWidgets('renders email field', (tester) async {
-      await tester.pumpWidget(createTestWidget());
+    Future<void> pumpLargeScreen(
+      WidgetTester tester,
+      Widget widget,
+    ) async {
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      await tester.pumpWidget(widget);
       await tester.pumpAndSettle();
+    }
 
+    testWidgets('renders email field', (tester) async {
+      await pumpLargeScreen(tester, createTestWidget());
       expect(find.widgetWithText(TextFormField, 'Email'), findsOneWidget);
     });
 
     testWidgets('renders password field', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
-
+      await pumpLargeScreen(tester, createTestWidget());
       expect(find.widgetWithText(TextFormField, 'Password'), findsOneWidget);
     });
 
     testWidgets('renders confirm password field', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
-
+      await pumpLargeScreen(tester, createTestWidget());
       expect(
         find.widgetWithText(TextFormField, 'Confirm Password'),
         findsOneWidget,
@@ -44,16 +52,12 @@ void main() {
     });
 
     testWidgets('renders register button', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
-
+      await pumpLargeScreen(tester, createTestWidget());
       expect(find.widgetWithText(FilledButton, 'Register'), findsOneWidget);
     });
 
     testWidgets('renders login navigation link', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
-
+      await pumpLargeScreen(tester, createTestWidget());
       expect(
         find.widgetWithText(TextButton, 'Already have an account? Login'),
         findsOneWidget,
@@ -61,8 +65,7 @@ void main() {
     });
 
     testWidgets('shows error on password mismatch', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await pumpLargeScreen(tester, createTestWidget());
 
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Email'),
@@ -84,13 +87,7 @@ void main() {
     });
 
     testWidgets('shows error when email is empty on submit', (tester) async {
-      tester.view.physicalSize = const Size(1080, 1920);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await pumpLargeScreen(tester, createTestWidget());
 
       await tester.tap(find.widgetWithText(FilledButton, 'Register'));
       await tester.pumpAndSettle();
@@ -99,8 +96,7 @@ void main() {
     });
 
     testWidgets('shows error when password is too short', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+      await pumpLargeScreen(tester, createTestWidget());
 
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Email'),
@@ -127,6 +123,12 @@ void main() {
     testWidgets('shows loading indicator when auth status is loading', (
       tester,
     ) async {
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
       await tester.pumpWidget(
         createTestWidget(
           overrides: [
@@ -140,9 +142,7 @@ void main() {
     });
 
     testWidgets('renders Create Account title', (tester) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
-
+      await pumpLargeScreen(tester, createTestWidget());
       expect(find.text('Create Account'), findsOneWidget);
     });
   });
