@@ -1,0 +1,121 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: habitpal
+      POSTGRES_PASSWORD: habitpal_dev
+      POSTGRES_DB: habitpal
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habitpal -d habitpal"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - habitpal-network
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: ./backend
+    command: ["./auth-service"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://habitpal:habitpal_dev@db:5432/habitpal?sslmode=disable
+      JWT_SECRET: dev-secret-change-in-production
+      JWT_EXPIRATION_HOURS: "24"
+      PORT: "8081"
+      AUTH_HTTP_PORT: "8081"
+      AUTH_GRPC_PORT: "9091"
+      RUN_MIGRATIONS: "true"
+      HEALTHCHECK_PORT: "8081"
+    ports:
+      - "8081:8081"
+      - "9091:9091"
+    networks:
+      - habitpal-network
+    restart: unless-stopped
+
+  habit-service:
+    build:
+      context: ./backend
+    command: ["./habit-service"]
+    depends_on:
+      db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://habitpal:habitpal_dev@db:5432/habitpal?sslmode=disable
+      JWT_SECRET: dev-secret-change-in-production
+      PORT: "8082"
+      HABIT_HTTP_PORT: "8082"
+      AUTH_GRPC_ADDR: auth-service:9091
+      HEALTHCHECK_PORT: "8082"
+    ports:
+      - "8082:8082"
+    networks:
+      - habitpal-network
+    restart: unless-stopped
+
+  completion-service:
+    build:
+      context: ./backend
+    command: ["./completion-service"]
+    depends_on:
+      db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://habitpal:habitpal_dev@db:5432/habitpal?sslmode=disable
+      JWT_SECRET: dev-secret-change-in-production
+      PORT: "8083"
+      COMPLETION_HTTP_PORT: "8083"
+      AUTH_GRPC_ADDR: auth-service:9091
+      HEALTHCHECK_PORT: "8083"
+    ports:
+      - "8083:8083"
+    networks:
+      - habitpal-network
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: ./backend
+    command: ["./gateway"]
+    depends_on:
+      auth-service:
+        condition: service_started
+      habit-service:
+        condition: service_started
+      completion-service:
+        condition: service_started
+    environment:
+      PORT: "8080"
+      AUTH_SERVICE_URL: http://auth-service:8081
+      HABIT_SERVICE_URL: http://habit-service:8082
+      COMPLETION_SERVICE_URL: http://completion-service:8083
+      HEALTHCHECK_PORT: "8080"
+    ports:
+      - "8080:8080"
+    networks:
+      - habitpal-network
+    restart: unless-stopped
+
+  # frontend:
+  #   Flutter web can be served via nginx or run locally.
+  #   For the dev workflow, run `flutter run -d chrome` from the frontend/ directory
+  #   instead of building inside Docker.
+
+networks:
+  habitpal-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
