@@ -16,11 +16,9 @@ class AuthRepository {
   final Dio _dio;
   final LocalStorage _storage;
 
-  AuthRepository({
-    required Dio dio,
-    required LocalStorage storage,
-  })  : _dio = dio,
-        _storage = storage;
+  AuthRepository({required Dio dio, required LocalStorage storage})
+    : _dio = dio,
+      _storage = storage;
 
   /// Authenticates a user and persists the JWT token + user data.
   /// Returns the [AuthResponse] on success.
@@ -34,13 +32,17 @@ class AuthRepository {
         ApiEndpoints.login,
         data: {'email': email, 'password': password},
       );
-      final authResponse =
-          AuthResponse.fromJson(response.data as Map<String, dynamic>);
+      final authResponse = AuthResponse.fromJson(
+        response.data as Map<String, dynamic>,
+      );
       await _storage.saveToken(authResponse.token);
       await _storage.saveUser(authResponse.user.toJson());
       return authResponse;
     } on DioException catch (e) {
-      throw _extractErrorMessage(e, 'Login failed. Please check your credentials.');
+      throw _extractErrorMessage(
+        e,
+        'Login failed. Please check your credentials.',
+      );
     }
   }
 
@@ -61,8 +63,9 @@ class AuthRepository {
           'display_name': displayName,
         },
       );
-      final authResponse =
-          AuthResponse.fromJson(response.data as Map<String, dynamic>);
+      final authResponse = AuthResponse.fromJson(
+        response.data as Map<String, dynamic>,
+      );
       await _storage.saveToken(authResponse.token);
       await _storage.saveUser(authResponse.user.toJson());
       return authResponse;

@@ -11,11 +11,7 @@ void main() {
   }) {
     return MaterialApp(
       home: Scaffold(
-        body: HabitCard(
-          habit: habit,
-          onTap: onTap,
-          onComplete: onComplete,
-        ),
+        body: HabitCard(habit: habit, onTap: onTap, onComplete: onComplete),
       ),
     );
   }
@@ -63,8 +59,9 @@ void main() {
       expect(find.text('Morning Run'), findsOneWidget);
     });
 
-    testWidgets('renders streak counter when streak is greater than zero',
-        (tester) async {
+    testWidgets('renders streak counter when streak is greater than zero', (
+      tester,
+    ) async {
       final habit = HabitModel(
         id: 'h1',
         name: 'Morning Run',
@@ -102,10 +99,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        createTestWidget(
-          habit: habit,
-          onTap: () => tapped = true,
-        ),
+        createTestWidget(habit: habit, onTap: () => tapped = true),
       );
       await tester.pumpAndSettle();
 
@@ -113,8 +107,9 @@ void main() {
       expect(tapped, true);
     });
 
-    testWidgets('onComplete callback fires when complete button is tapped',
-        (tester) async {
+    testWidgets('onComplete callback fires when complete button is tapped', (
+      tester,
+    ) async {
       var completed = false;
       final habit = HabitModel(
         id: 'h1',
@@ -123,10 +118,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        createTestWidget(
-          habit: habit,
-          onComplete: () => completed = true,
-        ),
+        createTestWidget(habit: habit, onComplete: () => completed = true),
       );
       await tester.pumpAndSettle();
 

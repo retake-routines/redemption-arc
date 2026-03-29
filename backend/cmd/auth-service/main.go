@@ -106,7 +106,6 @@ func main() {
 	// Setup HTTP server with Gin
 	r := gin.Default()
 
-
 	auth := r.Group("/auth")
 	{
 		auth.POST("/register", authHandler.HandleRegister)

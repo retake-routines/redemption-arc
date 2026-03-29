@@ -13,16 +13,11 @@ class ProfileScreen extends ConsumerWidget {
     final profile = ref.watch(profileProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
+      appBar: AppBar(title: const Text('Profile')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const CircleAvatar(
-            radius: 48,
-            child: Icon(Icons.person, size: 48),
-          ),
+          const CircleAvatar(radius: 48, child: Icon(Icons.person, size: 48)),
           const SizedBox(height: 16),
           Text(
             profile.email.isNotEmpty ? profile.email : 'User',
@@ -47,11 +42,11 @@ class ProfileScreen extends ConsumerWidget {
                 ListTile(
                   leading: const Icon(Icons.language),
                   title: const Text('Language'),
-                  trailing:
-                      Text(profile.locale == 'en' ? 'English' : 'Russian'),
+                  trailing: Text(
+                    profile.locale == 'en' ? 'English' : 'Russian',
+                  ),
                   onTap: () {
-                    final newLocale =
-                        profile.locale == 'en' ? 'ru' : 'en';
+                    final newLocale = profile.locale == 'en' ? 'ru' : 'en';
                     ref.read(profileProvider.notifier).setLocale(newLocale);
                   },
                 ),
@@ -67,9 +62,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
               title: Text(
                 'Logout',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                ),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               onTap: () async {
                 final confirmed = await showAdaptiveConfirmDialog<bool>(

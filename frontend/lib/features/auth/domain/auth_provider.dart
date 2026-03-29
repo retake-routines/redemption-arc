@@ -38,10 +38,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   AuthNotifier(this._repository) : super(const AuthState());
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = state.copyWith(status: AuthStatus.loading);
     try {
       final authResponse = await _repository.login(
@@ -54,10 +51,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         token: authResponse.token,
       );
     } catch (e) {
-      state = AuthState(
-        status: AuthStatus.error,
-        errorMessage: e.toString(),
-      );
+      state = AuthState(status: AuthStatus.error, errorMessage: e.toString());
     }
   }
 
@@ -79,10 +73,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         token: authResponse.token,
       );
     } catch (e) {
-      state = AuthState(
-        status: AuthStatus.error,
-        errorMessage: e.toString(),
-      );
+      state = AuthState(status: AuthStatus.error, errorMessage: e.toString());
     }
   }
 
@@ -96,18 +87,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
     final isAuthed = await _repository.isAuthenticated();
     if (isAuthed) {
       final user = await _repository.getCachedUser();
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        user: user,
-      );
+      state = AuthState(status: AuthStatus.authenticated, user: user);
     } else {
       state = const AuthState(status: AuthStatus.unauthenticated);
     }
   }
 }
 
-final authStateProvider =
-    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final repository = ref.read(authRepositoryProvider);
   final notifier = AuthNotifier(repository);
 

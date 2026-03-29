@@ -82,8 +82,5 @@ AuthResponse createTestAuthResponse({
   String token = 'test-jwt-token',
   UserModel? user,
 }) {
-  return AuthResponse(
-    token: token,
-    user: user ?? createTestUser(),
-  );
+  return AuthResponse(token: token, user: user ?? createTestUser());
 }

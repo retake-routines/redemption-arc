@@ -14,9 +14,7 @@ void main() {
         ),
         ...overrides,
       ],
-      child: const MaterialApp(
-        home: RegisterScreen(),
-      ),
+      child: const MaterialApp(home: RegisterScreen()),
     );
   }
 
@@ -126,14 +124,13 @@ void main() {
       );
     });
 
-    testWidgets('shows loading indicator when auth status is loading',
-        (tester) async {
+    testWidgets('shows loading indicator when auth status is loading', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         createTestWidget(
           overrides: [
-            authStateProvider.overrideWith(
-              (ref) => _LoadingAuthNotifier(),
-            ),
+            authStateProvider.overrideWith((ref) => _LoadingAuthNotifier()),
           ],
         ),
       );

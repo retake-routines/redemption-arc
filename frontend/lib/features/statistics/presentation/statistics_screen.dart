@@ -24,60 +24,60 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
     final stats = ref.watch(statsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Statistics'),
-      ),
-      body: stats.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Activity',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 12),
-                          CalendarHeatmap(
-                            completedDates: ref
-                                .watch(habitsProvider)
-                                .habits
-                                .expand((h) => h.completions)
-                                .map((c) => c.completedAt)
-                                .toList(),
-                          ),
-                        ],
+      appBar: AppBar(title: const Text('Statistics')),
+      body:
+          stats.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Activity',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 12),
+                            CalendarHeatmap(
+                              completedDates:
+                                  ref
+                                      .watch(habitsProvider)
+                                      .habits
+                                      .expand((h) => h.completions)
+                                      .map((c) => c.completedAt)
+                                      .toList(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  _StatCard(
-                    icon: Icons.percent,
-                    title: 'Completion Rate',
-                    value:
-                        '${(stats.overallCompletionRate * 100).toStringAsFixed(1)}%',
-                  ),
-                  const SizedBox(height: 12),
-                  _StatCard(
-                    icon: Icons.check_circle,
-                    title: 'Total Completions',
-                    value: '${stats.totalCompletions}',
-                  ),
-                  const SizedBox(height: 12),
-                  _StatCard(
-                    icon: Icons.calendar_today,
-                    title: 'Active Days',
-                    value: '${stats.activeDays}',
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    _StatCard(
+                      icon: Icons.percent,
+                      title: 'Completion Rate',
+                      value:
+                          '${(stats.overallCompletionRate * 100).toStringAsFixed(1)}%',
+                    ),
+                    const SizedBox(height: 12),
+                    _StatCard(
+                      icon: Icons.check_circle,
+                      title: 'Total Completions',
+                      value: '${stats.totalCompletions}',
+                    ),
+                    const SizedBox(height: 12),
+                    _StatCard(
+                      icon: Icons.calendar_today,
+                      title: 'Active Days',
+                      value: '${stats.activeDays}',
+                    ),
+                  ],
+                ),
               ),
-            ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: 1,
         onDestinationSelected: (index) {
@@ -132,9 +132,9 @@ class _StatCard extends StatelessWidget {
         trailing: Text(
           value,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ),
     );

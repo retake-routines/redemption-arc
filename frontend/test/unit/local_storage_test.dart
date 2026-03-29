@@ -86,8 +86,7 @@ void main() {
         expect(result, false);
       });
 
-      test('setDarkMode and isDarkMode store and retrieve the value',
-          () async {
+      test('setDarkMode and isDarkMode store and retrieve the value', () async {
         await storage.setDarkMode(true);
 
         final result = await storage.isDarkMode();

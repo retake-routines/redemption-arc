@@ -19,12 +19,14 @@ class UserModel {
       id: json['id'] as String? ?? '',
       email: json['email'] as String? ?? '',
       displayName: json['display_name'] as String? ?? '',
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
-          : DateTime.now(),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'] as String)
-          : DateTime.now(),
+      createdAt:
+          json['created_at'] != null
+              ? DateTime.parse(json['created_at'] as String)
+              : DateTime.now(),
+      updatedAt:
+          json['updated_at'] != null
+              ? DateTime.parse(json['updated_at'] as String)
+              : DateTime.now(),
     );
   }
 
@@ -89,21 +91,26 @@ class HabitModel {
       frequency: json['frequency_type'] as String? ?? 'daily',
       targetCount: json['frequency_value'] as int? ?? 1,
       isArchived: json['is_archived'] as bool? ?? false,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
-          : DateTime.now(),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'] as String)
-          : null,
-      streak: json['streak'] != null
-          ? StreakModel.fromJson(json['streak'] as Map<String, dynamic>)
-          : const StreakModel(),
-      completions: json['completions'] != null
-          ? (json['completions'] as List<dynamic>)
-              .map(
-                  (e) => CompletionModel.fromJson(e as Map<String, dynamic>))
-              .toList()
-          : const [],
+      createdAt:
+          json['created_at'] != null
+              ? DateTime.parse(json['created_at'] as String)
+              : DateTime.now(),
+      updatedAt:
+          json['updated_at'] != null
+              ? DateTime.parse(json['updated_at'] as String)
+              : null,
+      streak:
+          json['streak'] != null
+              ? StreakModel.fromJson(json['streak'] as Map<String, dynamic>)
+              : const StreakModel(),
+      completions:
+          json['completions'] != null
+              ? (json['completions'] as List<dynamic>)
+                  .map(
+                    (e) => CompletionModel.fromJson(e as Map<String, dynamic>),
+                  )
+                  .toList()
+              : const [],
     );
   }
 
@@ -175,9 +182,10 @@ class CompletionModel {
       id: json['id'] as String? ?? '',
       habitId: json['habit_id'] as String? ?? '',
       userId: json['user_id'] as String? ?? '',
-      completedAt: json['completed_at'] != null
-          ? DateTime.parse(json['completed_at'] as String)
-          : DateTime.now(),
+      completedAt:
+          json['completed_at'] != null
+              ? DateTime.parse(json['completed_at'] as String)
+              : DateTime.now(),
       note: json['note'] as String? ?? '',
     );
   }
@@ -212,9 +220,10 @@ class StreakModel {
       habitId: json['habit_id'] as String? ?? '',
       currentStreak: json['current_streak'] as int? ?? 0,
       longestStreak: json['longest_streak'] as int? ?? 0,
-      lastCompletedAt: json['last_completed_at'] != null
-          ? DateTime.parse(json['last_completed_at'] as String)
-          : null,
+      lastCompletedAt:
+          json['last_completed_at'] != null
+              ? DateTime.parse(json['last_completed_at'] as String)
+              : null,
     );
   }
 

@@ -36,10 +36,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.15),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
     _animationController.forward();
   }
 
@@ -55,7 +54,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   Future<void> _handleRegister() async {
     if (_formKey.currentState?.validate() ?? false) {
-      await ref.read(authStateProvider.notifier).register(
+      await ref
+          .read(authStateProvider.notifier)
+          .register(
             email: _emailController.text.trim(),
             password: _passwordController.text,
             displayName: _nameController.text.trim(),
@@ -94,10 +95,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     Text(
                       'Create Account',
                       textAlign: TextAlign.center,
-                      style:
-                          Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 48),
                     TextFormField(
@@ -178,17 +177,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                         ),
                       ),
                     FilledButton(
-                      onPressed: authState.status == AuthStatus.loading
-                          ? null
-                          : _handleRegister,
-                      child: authState.status == AuthStatus.loading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child:
-                                  CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Register'),
+                      onPressed:
+                          authState.status == AuthStatus.loading
+                              ? null
+                              : _handleRegister,
+                      child:
+                          authState.status == AuthStatus.loading
+                              ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Text('Register'),
                     ),
                     const SizedBox(height: 16),
                     TextButton(

@@ -27,59 +27,60 @@ void main() {
   group('AuthRepository', () {
     group('login', () {
       test('calls POST /auth/login with correct body', () async {
-        when(() => mockDio.post(
-              ApiEndpoints.login,
-              data: {
+        when(
+          () => mockDio.post(
+            ApiEndpoints.login,
+            data: {'email': 'test@example.com', 'password': 'password123'},
+          ),
+        ).thenAnswer(
+          (_) async => Response(
+            requestOptions: RequestOptions(path: ApiEndpoints.login),
+            statusCode: 200,
+            data: {
+              'token': 'jwt-token-123',
+              'user': {
+                'id': 'user-1',
                 'email': 'test@example.com',
-                'password': 'password123',
+                'display_name': 'Test User',
+                'created_at': '2024-01-01T00:00:00.000Z',
+                'updated_at': '2024-01-01T00:00:00.000Z',
               },
-            )).thenAnswer((_) async => Response(
-              requestOptions: RequestOptions(path: ApiEndpoints.login),
-              statusCode: 200,
-              data: {
-                'token': 'jwt-token-123',
-                'user': {
-                  'id': 'user-1',
-                  'email': 'test@example.com',
-                  'display_name': 'Test User',
-                  'created_at': '2024-01-01T00:00:00.000Z',
-                  'updated_at': '2024-01-01T00:00:00.000Z',
-                },
-              },
-            ));
+            },
+          ),
+        );
 
         await repository.login(
           email: 'test@example.com',
           password: 'password123',
         );
 
-        verify(() => mockDio.post(
-              ApiEndpoints.login,
-              data: {
-                'email': 'test@example.com',
-                'password': 'password123',
-              },
-            )).called(1);
+        verify(
+          () => mockDio.post(
+            ApiEndpoints.login,
+            data: {'email': 'test@example.com', 'password': 'password123'},
+          ),
+        ).called(1);
       });
 
       test('parses AuthResponse correctly', () async {
-        when(() => mockDio.post(
-              ApiEndpoints.login,
-              data: any(named: 'data'),
-            )).thenAnswer((_) async => Response(
-              requestOptions: RequestOptions(path: ApiEndpoints.login),
-              statusCode: 200,
-              data: {
-                'token': 'jwt-token-123',
-                'user': {
-                  'id': 'user-1',
-                  'email': 'test@example.com',
-                  'display_name': 'Test User',
-                  'created_at': '2024-01-01T00:00:00.000Z',
-                  'updated_at': '2024-01-01T00:00:00.000Z',
-                },
+        when(
+          () => mockDio.post(ApiEndpoints.login, data: any(named: 'data')),
+        ).thenAnswer(
+          (_) async => Response(
+            requestOptions: RequestOptions(path: ApiEndpoints.login),
+            statusCode: 200,
+            data: {
+              'token': 'jwt-token-123',
+              'user': {
+                'id': 'user-1',
+                'email': 'test@example.com',
+                'display_name': 'Test User',
+                'created_at': '2024-01-01T00:00:00.000Z',
+                'updated_at': '2024-01-01T00:00:00.000Z',
               },
-            ));
+            },
+          ),
+        );
 
         final result = await repository.login(
           email: 'test@example.com',
@@ -93,23 +94,24 @@ void main() {
       });
 
       test('persists token and user to storage on success', () async {
-        when(() => mockDio.post(
-              ApiEndpoints.login,
-              data: any(named: 'data'),
-            )).thenAnswer((_) async => Response(
-              requestOptions: RequestOptions(path: ApiEndpoints.login),
-              statusCode: 200,
-              data: {
-                'token': 'jwt-token-123',
-                'user': {
-                  'id': 'user-1',
-                  'email': 'test@example.com',
-                  'display_name': 'Test User',
-                  'created_at': '2024-01-01T00:00:00.000Z',
-                  'updated_at': '2024-01-01T00:00:00.000Z',
-                },
+        when(
+          () => mockDio.post(ApiEndpoints.login, data: any(named: 'data')),
+        ).thenAnswer(
+          (_) async => Response(
+            requestOptions: RequestOptions(path: ApiEndpoints.login),
+            statusCode: 200,
+            data: {
+              'token': 'jwt-token-123',
+              'user': {
+                'id': 'user-1',
+                'email': 'test@example.com',
+                'display_name': 'Test User',
+                'created_at': '2024-01-01T00:00:00.000Z',
+                'updated_at': '2024-01-01T00:00:00.000Z',
               },
-            ));
+            },
+          ),
+        );
 
         await repository.login(
           email: 'test@example.com',
@@ -125,24 +127,22 @@ void main() {
       });
 
       test('throws on DioException with server error message', () async {
-        when(() => mockDio.post(
-              ApiEndpoints.login,
-              data: any(named: 'data'),
-            )).thenThrow(DioException(
-          requestOptions: RequestOptions(path: ApiEndpoints.login),
-          response: Response(
+        when(
+          () => mockDio.post(ApiEndpoints.login, data: any(named: 'data')),
+        ).thenThrow(
+          DioException(
             requestOptions: RequestOptions(path: ApiEndpoints.login),
-            statusCode: 401,
-            data: {'error': 'Invalid credentials'},
+            response: Response(
+              requestOptions: RequestOptions(path: ApiEndpoints.login),
+              statusCode: 401,
+              data: {'error': 'Invalid credentials'},
+            ),
+            type: DioExceptionType.badResponse,
           ),
-          type: DioExceptionType.badResponse,
-        ));
+        );
 
         expect(
-          () => repository.login(
-            email: 'test@example.com',
-            password: 'wrong',
-          ),
+          () => repository.login(email: 'test@example.com', password: 'wrong'),
           throwsA(isA<String>()),
         );
       });
@@ -150,27 +150,31 @@ void main() {
 
     group('register', () {
       test('calls POST /auth/register with correct body', () async {
-        when(() => mockDio.post(
-              ApiEndpoints.register,
-              data: {
+        when(
+          () => mockDio.post(
+            ApiEndpoints.register,
+            data: {
+              'email': 'new@example.com',
+              'password': 'password123',
+              'display_name': 'New User',
+            },
+          ),
+        ).thenAnswer(
+          (_) async => Response(
+            requestOptions: RequestOptions(path: ApiEndpoints.register),
+            statusCode: 201,
+            data: {
+              'token': 'jwt-token-456',
+              'user': {
+                'id': 'user-2',
                 'email': 'new@example.com',
-                'password': 'password123',
                 'display_name': 'New User',
+                'created_at': '2024-01-01T00:00:00.000Z',
+                'updated_at': '2024-01-01T00:00:00.000Z',
               },
-            )).thenAnswer((_) async => Response(
-              requestOptions: RequestOptions(path: ApiEndpoints.register),
-              statusCode: 201,
-              data: {
-                'token': 'jwt-token-456',
-                'user': {
-                  'id': 'user-2',
-                  'email': 'new@example.com',
-                  'display_name': 'New User',
-                  'created_at': '2024-01-01T00:00:00.000Z',
-                  'updated_at': '2024-01-01T00:00:00.000Z',
-                },
-              },
-            ));
+            },
+          ),
+        );
 
         await repository.register(
           email: 'new@example.com',
@@ -178,34 +182,37 @@ void main() {
           displayName: 'New User',
         );
 
-        verify(() => mockDio.post(
-              ApiEndpoints.register,
-              data: {
-                'email': 'new@example.com',
-                'password': 'password123',
-                'display_name': 'New User',
-              },
-            )).called(1);
+        verify(
+          () => mockDio.post(
+            ApiEndpoints.register,
+            data: {
+              'email': 'new@example.com',
+              'password': 'password123',
+              'display_name': 'New User',
+            },
+          ),
+        ).called(1);
       });
 
       test('parses AuthResponse correctly', () async {
-        when(() => mockDio.post(
-              ApiEndpoints.register,
-              data: any(named: 'data'),
-            )).thenAnswer((_) async => Response(
-              requestOptions: RequestOptions(path: ApiEndpoints.register),
-              statusCode: 201,
-              data: {
-                'token': 'jwt-token-456',
-                'user': {
-                  'id': 'user-2',
-                  'email': 'new@example.com',
-                  'display_name': 'New User',
-                  'created_at': '2024-01-01T00:00:00.000Z',
-                  'updated_at': '2024-01-01T00:00:00.000Z',
-                },
+        when(
+          () => mockDio.post(ApiEndpoints.register, data: any(named: 'data')),
+        ).thenAnswer(
+          (_) async => Response(
+            requestOptions: RequestOptions(path: ApiEndpoints.register),
+            statusCode: 201,
+            data: {
+              'token': 'jwt-token-456',
+              'user': {
+                'id': 'user-2',
+                'email': 'new@example.com',
+                'display_name': 'New User',
+                'created_at': '2024-01-01T00:00:00.000Z',
+                'updated_at': '2024-01-01T00:00:00.000Z',
               },
-            ));
+            },
+          ),
+        );
 
         final result = await repository.register(
           email: 'new@example.com',

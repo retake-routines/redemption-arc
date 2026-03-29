@@ -112,7 +112,7 @@ void main() {
             'user_id': 'user-1',
             'completed_at': '2024-01-15T10:00:00.000Z',
             'note': 'Great run',
-          }
+          },
         ],
       };
 
@@ -155,17 +155,19 @@ void main() {
       expect(habit.frequency, 'weekly');
     });
 
-    test('fromJson maps API field frequency_value to model field targetCount',
-        () {
-      final json = {
-        'frequency_value': 3,
-        'created_at': '2024-01-01T00:00:00.000Z',
-      };
+    test(
+      'fromJson maps API field frequency_value to model field targetCount',
+      () {
+        final json = {
+          'frequency_value': 3,
+          'created_at': '2024-01-01T00:00:00.000Z',
+        };
 
-      final habit = HabitModel.fromJson(json);
+        final habit = HabitModel.fromJson(json);
 
-      expect(habit.targetCount, 3);
-    });
+        expect(habit.targetCount, 3);
+      },
+    );
 
     test('fromJson handles missing fields with defaults', () {
       final json = <String, dynamic>{};
@@ -223,27 +225,25 @@ void main() {
       expect(json['frequency_type'], 'weekly');
     });
 
-    test('toJson maps model field targetCount to API field frequency_value',
-        () {
-      final habit = HabitModel(
-        id: 'habit-1',
-        name: 'Run',
-        targetCount: 5,
-        createdAt: DateTime(2024, 1, 1),
-      );
+    test(
+      'toJson maps model field targetCount to API field frequency_value',
+      () {
+        final habit = HabitModel(
+          id: 'habit-1',
+          name: 'Run',
+          targetCount: 5,
+          createdAt: DateTime(2024, 1, 1),
+        );
 
-      final json = habit.toJson();
+        final json = habit.toJson();
 
-      expect(json['frequency_value'], 5);
-    });
+        expect(json['frequency_value'], 5);
+      },
+    );
 
     test('updatedAt defaults to createdAt when not provided', () {
       final created = DateTime(2024, 1, 1);
-      final habit = HabitModel(
-        id: 'habit-1',
-        name: 'Test',
-        createdAt: created,
-      );
+      final habit = HabitModel(id: 'habit-1', name: 'Test', createdAt: created);
 
       expect(habit.updatedAt, created);
     });
@@ -278,7 +278,9 @@ void main() {
       expect(completion.habitId, 'habit-1');
       expect(completion.userId, 'user-1');
       expect(
-          completion.completedAt, DateTime.parse('2024-01-15T10:30:00.000Z'));
+        completion.completedAt,
+        DateTime.parse('2024-01-15T10:30:00.000Z'),
+      );
       expect(completion.note, 'Done!');
     });
 
@@ -345,8 +347,10 @@ void main() {
       expect(streak.habitId, 'habit-1');
       expect(streak.currentStreak, 5);
       expect(streak.longestStreak, 10);
-      expect(streak.lastCompletedAt,
-          DateTime.parse('2024-01-15T10:30:00.000Z'));
+      expect(
+        streak.lastCompletedAt,
+        DateTime.parse('2024-01-15T10:30:00.000Z'),
+      );
     });
 
     test('fromJson handles missing fields with defaults', () {

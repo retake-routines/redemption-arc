@@ -16,12 +16,8 @@ void main() {
   });
 
   setUpAll(() {
-    registerFallbackValue(
-      const CreateHabitRequest(title: 'fallback'),
-    );
-    registerFallbackValue(
-      const UpdateHabitRequest(),
-    );
+    registerFallbackValue(const CreateHabitRequest(title: 'fallback'));
+    registerFallbackValue(const UpdateHabitRequest());
   });
 
   group('HabitsNotifier', () {
@@ -42,22 +38,16 @@ void main() {
     group('loadHabits', () {
       test('populates habits list on success', () async {
         final testHabits = [
-          HabitModel(
-            id: 'h1',
-            name: 'Run',
-            createdAt: DateTime(2024, 1, 1),
-          ),
-          HabitModel(
-            id: 'h2',
-            name: 'Read',
-            createdAt: DateTime(2024, 1, 1),
-          ),
+          HabitModel(id: 'h1', name: 'Run', createdAt: DateTime(2024, 1, 1)),
+          HabitModel(id: 'h2', name: 'Read', createdAt: DateTime(2024, 1, 1)),
         ];
 
-        when(() => mockRepository.getHabits())
-            .thenAnswer((_) async => testHabits);
-        when(() => mockRepository.getStreak(any()))
-            .thenAnswer((_) async => const StreakModel());
+        when(
+          () => mockRepository.getHabits(),
+        ).thenAnswer((_) async => testHabits);
+        when(
+          () => mockRepository.getStreak(any()),
+        ).thenAnswer((_) async => const StreakModel());
 
         await notifier.loadHabits();
 
@@ -69,8 +59,9 @@ void main() {
       });
 
       test('sets error message on failure', () async {
-        when(() => mockRepository.getHabits())
-            .thenThrow(Exception('Network error'));
+        when(
+          () => mockRepository.getHabits(),
+        ).thenThrow(Exception('Network error'));
 
         await notifier.loadHabits();
 
@@ -80,11 +71,7 @@ void main() {
 
       test('enriches habits with streak data', () async {
         final testHabits = [
-          HabitModel(
-            id: 'h1',
-            name: 'Run',
-            createdAt: DateTime(2024, 1, 1),
-          ),
+          HabitModel(id: 'h1', name: 'Run', createdAt: DateTime(2024, 1, 1)),
         ];
         final testStreak = const StreakModel(
           habitId: 'h1',
@@ -92,10 +79,12 @@ void main() {
           longestStreak: 10,
         );
 
-        when(() => mockRepository.getHabits())
-            .thenAnswer((_) async => testHabits);
-        when(() => mockRepository.getStreak('h1'))
-            .thenAnswer((_) async => testStreak);
+        when(
+          () => mockRepository.getHabits(),
+        ).thenAnswer((_) async => testHabits);
+        when(
+          () => mockRepository.getStreak('h1'),
+        ).thenAnswer((_) async => testStreak);
 
         await notifier.loadHabits();
 
@@ -105,17 +94,15 @@ void main() {
 
       test('handles streak fetch failure gracefully', () async {
         final testHabits = [
-          HabitModel(
-            id: 'h1',
-            name: 'Run',
-            createdAt: DateTime(2024, 1, 1),
-          ),
+          HabitModel(id: 'h1', name: 'Run', createdAt: DateTime(2024, 1, 1)),
         ];
 
-        when(() => mockRepository.getHabits())
-            .thenAnswer((_) async => testHabits);
-        when(() => mockRepository.getStreak(any()))
-            .thenThrow(Exception('Streak error'));
+        when(
+          () => mockRepository.getHabits(),
+        ).thenAnswer((_) async => testHabits);
+        when(
+          () => mockRepository.getStreak(any()),
+        ).thenThrow(Exception('Streak error'));
 
         await notifier.loadHabits();
 
@@ -125,10 +112,10 @@ void main() {
       });
 
       test('transitions through loading state', () async {
-        when(() => mockRepository.getHabits())
-            .thenAnswer((_) async => []);
-        when(() => mockRepository.getStreak(any()))
-            .thenAnswer((_) async => const StreakModel());
+        when(() => mockRepository.getHabits()).thenAnswer((_) async => []);
+        when(
+          () => mockRepository.getStreak(any()),
+        ).thenAnswer((_) async => const StreakModel());
 
         await notifier.loadHabits();
 
@@ -146,8 +133,9 @@ void main() {
           createdAt: DateTime(2024, 1, 1),
         );
 
-        when(() => mockRepository.createHabit(any()))
-            .thenAnswer((_) async => newHabit);
+        when(
+          () => mockRepository.createHabit(any()),
+        ).thenAnswer((_) async => newHabit);
 
         await notifier.createHabit(
           const CreateHabitRequest(title: 'New Habit'),
@@ -158,8 +146,9 @@ void main() {
       });
 
       test('sets error message on failure', () async {
-        when(() => mockRepository.createHabit(any()))
-            .thenThrow(Exception('Create failed'));
+        when(
+          () => mockRepository.createHabit(any()),
+        ).thenThrow(Exception('Create failed'));
 
         await notifier.createHabit(
           const CreateHabitRequest(title: 'Failing Habit'),
@@ -173,28 +162,21 @@ void main() {
       test('removes habit from list', () async {
         // Seed with habits
         final testHabits = [
-          HabitModel(
-            id: 'h1',
-            name: 'Keep',
-            createdAt: DateTime(2024, 1, 1),
-          ),
-          HabitModel(
-            id: 'h2',
-            name: 'Delete',
-            createdAt: DateTime(2024, 1, 1),
-          ),
+          HabitModel(id: 'h1', name: 'Keep', createdAt: DateTime(2024, 1, 1)),
+          HabitModel(id: 'h2', name: 'Delete', createdAt: DateTime(2024, 1, 1)),
         ];
 
-        when(() => mockRepository.getHabits())
-            .thenAnswer((_) async => testHabits);
-        when(() => mockRepository.getStreak(any()))
-            .thenAnswer((_) async => const StreakModel());
+        when(
+          () => mockRepository.getHabits(),
+        ).thenAnswer((_) async => testHabits);
+        when(
+          () => mockRepository.getStreak(any()),
+        ).thenAnswer((_) async => const StreakModel());
 
         await notifier.loadHabits();
         expect(notifier.state.habits.length, 2);
 
-        when(() => mockRepository.deleteHabit('h2'))
-            .thenAnswer((_) async {});
+        when(() => mockRepository.deleteHabit('h2')).thenAnswer((_) async {});
 
         await notifier.deleteHabit('h2');
 
@@ -203,8 +185,9 @@ void main() {
       });
 
       test('sets error message on failure', () async {
-        when(() => mockRepository.deleteHabit(any()))
-            .thenThrow(Exception('Delete failed'));
+        when(
+          () => mockRepository.deleteHabit(any()),
+        ).thenThrow(Exception('Delete failed'));
 
         await notifier.deleteHabit('h1');
 
@@ -214,15 +197,13 @@ void main() {
 
     group('completeHabit', () {
       test('calls repository and reloads habits', () async {
-        when(() => mockRepository.completeHabit('h1'))
-            .thenAnswer((_) async => CompletionModel(
-                  id: 'c-1',
-                  completedAt: DateTime.now(),
-                ));
-        when(() => mockRepository.getHabits())
-            .thenAnswer((_) async => []);
-        when(() => mockRepository.getStreak(any()))
-            .thenAnswer((_) async => const StreakModel());
+        when(() => mockRepository.completeHabit('h1')).thenAnswer(
+          (_) async => CompletionModel(id: 'c-1', completedAt: DateTime.now()),
+        );
+        when(() => mockRepository.getHabits()).thenAnswer((_) async => []);
+        when(
+          () => mockRepository.getStreak(any()),
+        ).thenAnswer((_) async => const StreakModel());
 
         await notifier.completeHabit('h1');
 
@@ -231,8 +212,9 @@ void main() {
       });
 
       test('sets error message on failure', () async {
-        when(() => mockRepository.completeHabit(any()))
-            .thenThrow(Exception('Complete failed'));
+        when(
+          () => mockRepository.completeHabit(any()),
+        ).thenThrow(Exception('Complete failed'));
 
         await notifier.completeHabit('h1');
 
@@ -251,10 +233,12 @@ void main() {
           ),
         ];
 
-        when(() => mockRepository.getHabits())
-            .thenAnswer((_) async => testHabits);
-        when(() => mockRepository.getStreak(any()))
-            .thenAnswer((_) async => const StreakModel());
+        when(
+          () => mockRepository.getHabits(),
+        ).thenAnswer((_) async => testHabits);
+        when(
+          () => mockRepository.getStreak(any()),
+        ).thenAnswer((_) async => const StreakModel());
 
         await notifier.loadHabits();
 
@@ -264,8 +248,9 @@ void main() {
           createdAt: DateTime(2024, 1, 1),
         );
 
-        when(() => mockRepository.updateHabit('h1', any()))
-            .thenAnswer((_) async => updatedHabit);
+        when(
+          () => mockRepository.updateHabit('h1', any()),
+        ).thenAnswer((_) async => updatedHabit);
 
         await notifier.updateHabit(
           'h1',

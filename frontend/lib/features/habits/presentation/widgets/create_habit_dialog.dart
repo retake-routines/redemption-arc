@@ -57,10 +57,7 @@ class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'New Habit',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text('New Habit', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             TextFormField(
               controller: _titleController,
@@ -108,13 +105,14 @@ class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
             const SizedBox(height: 20),
             FilledButton(
               onPressed: _isSubmitting ? null : _submit,
-              child: _isSubmitting
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Create Habit'),
+              child:
+                  _isSubmitting
+                      ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : const Text('Create Habit'),
             ),
           ],
         ),

@@ -25,8 +25,7 @@ class AdaptiveSwitch extends StatelessWidget {
       return CupertinoSwitch(
         value: value,
         onChanged: onChanged,
-        activeTrackColor:
-            activeColor ?? Theme.of(context).colorScheme.primary,
+        activeTrackColor: activeColor ?? Theme.of(context).colorScheme.primary,
       );
     }
 
@@ -57,44 +56,47 @@ Future<T?> showAdaptiveConfirmDialog<T>({
   if (isCupertino) {
     return showCupertinoDialog<T>(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(cancelText),
+      builder:
+          (context) => CupertinoAlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(cancelText),
+              ),
+              CupertinoDialogAction(
+                isDestructiveAction: isDestructive,
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(confirmText),
+              ),
+            ],
           ),
-          CupertinoDialogAction(
-            isDestructiveAction: isDestructive,
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(confirmText),
-          ),
-        ],
-      ),
     );
   }
 
   return showDialog<T>(
     context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title),
-      content: Text(content),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: Text(cancelText),
+    builder:
+        (context) => AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(cancelText),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style:
+                  isDestructive
+                      ? TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.error,
+                      )
+                      : null,
+              child: Text(confirmText),
+            ),
+          ],
         ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          style: isDestructive
-              ? TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.error,
-                )
-              : null,
-          child: Text(confirmText),
-        ),
-      ],
-    ),
   );
 }

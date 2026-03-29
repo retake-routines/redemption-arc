@@ -61,10 +61,7 @@ class HabitRepository {
     if (note != null && note.isNotEmpty) {
       data['note'] = note;
     }
-    final response = await _dio.post(
-      ApiEndpoints.completions,
-      data: data,
-    );
+    final response = await _dio.post(ApiEndpoints.completions, data: data);
     return CompletionModel.fromJson(response.data as Map<String, dynamic>);
   }
 
@@ -79,10 +76,7 @@ class HabitRepository {
     int page = 1,
     int limit = 100,
   }) async {
-    final queryParams = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+    final queryParams = <String, dynamic>{'page': page, 'limit': limit};
     if (habitId != null) {
       queryParams['habit_id'] = habitId;
     }

@@ -34,10 +34,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.15),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
     _animationController.forward();
   }
 
@@ -51,7 +50,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
-      await ref.read(authStateProvider.notifier).login(
+      await ref
+          .read(authStateProvider.notifier)
+          .login(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -89,10 +90,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     Text(
                       'HabitPal',
                       textAlign: TextAlign.center,
-                      style:
-                          Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 48),
                     TextFormField(
@@ -139,17 +138,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                       ),
                     FilledButton(
-                      onPressed: authState.status == AuthStatus.loading
-                          ? null
-                          : _handleLogin,
-                      child: authState.status == AuthStatus.loading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child:
-                                  CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Login'),
+                      onPressed:
+                          authState.status == AuthStatus.loading
+                              ? null
+                              : _handleLogin,
+                      child:
+                          authState.status == AuthStatus.loading
+                              ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Text('Login'),
                     ),
                     const SizedBox(height: 16),
                     TextButton(

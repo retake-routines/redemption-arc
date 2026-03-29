@@ -48,52 +48,52 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
           ),
         ],
       ),
-      body: habitsState.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : habitsState.habits.isEmpty
+      body:
+          habitsState.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : habitsState.habits.isEmpty
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.eco_outlined,
-                        size: 80,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withAlpha(128),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No habits yet',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text('Tap + to create your first habit'),
-                    ],
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: () =>
-                      ref.read(habitsProvider.notifier).loadHabits(),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: habitsState.habits.length,
-                    itemBuilder: (context, index) {
-                      final habit = habitsState.habits[index];
-                      return _StaggeredListItem(
-                        index: index,
-                        child: HabitCard(
-                          habit: habit,
-                          onTap: () => context.go('/habits/${habit.id}'),
-                          onComplete: () => ref
-                              .read(habitsProvider.notifier)
-                              .completeHabit(habit.id),
-                        ),
-                      );
-                    },
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.eco_outlined,
+                      size: 80,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withAlpha(128),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No habits yet',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('Tap + to create your first habit'),
+                  ],
                 ),
+              )
+              : RefreshIndicator(
+                onRefresh: () => ref.read(habitsProvider.notifier).loadHabits(),
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: habitsState.habits.length,
+                  itemBuilder: (context, index) {
+                    final habit = habitsState.habits[index];
+                    return _StaggeredListItem(
+                      index: index,
+                      child: HabitCard(
+                        habit: habit,
+                        onTap: () => context.go('/habits/${habit.id}'),
+                        onComplete:
+                            () => ref
+                                .read(habitsProvider.notifier)
+                                .completeHabit(habit.id),
+                      ),
+                    );
+                  },
+                ),
+              ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -145,10 +145,7 @@ class _StaggeredListItem extends StatelessWidget {
   final int index;
   final Widget child;
 
-  const _StaggeredListItem({
-    required this.index,
-    required this.child,
-  });
+  const _StaggeredListItem({required this.index, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -163,8 +160,8 @@ class _StaggeredListItem extends StatelessWidget {
         // Calculate the effective progress accounting for stagger delay
         final delayFraction =
             delay.inMilliseconds / totalDuration.inMilliseconds;
-        final effectiveValue =
-            ((value - delayFraction) / (1.0 - delayFraction)).clamp(0.0, 1.0);
+        final effectiveValue = ((value - delayFraction) / (1.0 - delayFraction))
+            .clamp(0.0, 1.0);
 
         return Opacity(
           opacity: effectiveValue,

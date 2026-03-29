@@ -49,10 +49,12 @@ void main() {
       );
 
       test('sets authenticated state on success', () async {
-        when(() => mockRepository.login(
-              email: any(named: 'email'),
-              password: any(named: 'password'),
-            )).thenAnswer((_) async => testAuthResponse);
+        when(
+          () => mockRepository.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => testAuthResponse);
 
         await notifier.login(email: 'test@example.com', password: 'password');
 
@@ -63,10 +65,12 @@ void main() {
       });
 
       test('sets error state on failure', () async {
-        when(() => mockRepository.login(
-              email: any(named: 'email'),
-              password: any(named: 'password'),
-            )).thenThrow(Exception('Invalid credentials'));
+        when(
+          () => mockRepository.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenThrow(Exception('Invalid credentials'));
 
         await notifier.login(email: 'test@example.com', password: 'wrong');
 
@@ -81,10 +85,12 @@ void main() {
           states.add(state.status);
         });
 
-        when(() => mockRepository.login(
-              email: any(named: 'email'),
-              password: any(named: 'password'),
-            )).thenAnswer((_) async => testAuthResponse);
+        when(
+          () => mockRepository.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => testAuthResponse);
 
         await notifier.login(email: 'test@example.com', password: 'password');
 
@@ -108,11 +114,13 @@ void main() {
       );
 
       test('sets authenticated state on success', () async {
-        when(() => mockRepository.register(
-              email: any(named: 'email'),
-              password: any(named: 'password'),
-              displayName: any(named: 'displayName'),
-            )).thenAnswer((_) async => testAuthResponse);
+        when(
+          () => mockRepository.register(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+            displayName: any(named: 'displayName'),
+          ),
+        ).thenAnswer((_) async => testAuthResponse);
 
         await notifier.register(
           email: 'new@example.com',
@@ -126,11 +134,13 @@ void main() {
       });
 
       test('sets error state on failure', () async {
-        when(() => mockRepository.register(
-              email: any(named: 'email'),
-              password: any(named: 'password'),
-              displayName: any(named: 'displayName'),
-            )).thenThrow(Exception('Email already exists'));
+        when(
+          () => mockRepository.register(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+            displayName: any(named: 'displayName'),
+          ),
+        ).thenThrow(Exception('Email already exists'));
 
         await notifier.register(
           email: 'existing@example.com',
@@ -153,13 +163,12 @@ void main() {
           createdAt: DateTime(2024, 1, 1),
           updatedAt: DateTime(2024, 1, 1),
         );
-        when(() => mockRepository.login(
-              email: any(named: 'email'),
-              password: any(named: 'password'),
-            )).thenAnswer((_) async => AuthResponse(
-              token: 'token',
-              user: testUser,
-            ));
+        when(
+          () => mockRepository.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => AuthResponse(token: 'token', user: testUser));
 
         await notifier.login(email: 'test@example.com', password: 'password');
         expect(notifier.state.status, AuthStatus.authenticated);

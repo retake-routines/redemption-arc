@@ -105,9 +105,8 @@ class HabitDetailScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     CalendarHeatmap(
-                      completedDates: habit.completions
-                          .map((c) => c.completedAt)
-                          .toList(),
+                      completedDates:
+                          habit.completions.map((c) => c.completedAt).toList(),
                     ),
                   ],
                 ),

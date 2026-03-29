@@ -40,10 +40,7 @@ class _HabitPalAppState extends ConsumerState<HabitPalApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ru'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('ru')],
     );
   }
 }

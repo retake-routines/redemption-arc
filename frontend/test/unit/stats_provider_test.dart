@@ -87,29 +87,20 @@ void main() {
                 id: 'h1',
                 name: 'Run',
                 createdAt: DateTime(2024, 1, 1),
-                streak: const StreakModel(
-                  currentStreak: 5,
-                  longestStreak: 10,
-                ),
+                streak: const StreakModel(currentStreak: 5, longestStreak: 10),
               ),
               HabitModel(
                 id: 'h2',
                 name: 'Read',
                 createdAt: DateTime(2024, 1, 1),
-                streak: const StreakModel(
-                  currentStreak: 3,
-                  longestStreak: 7,
-                ),
+                streak: const StreakModel(currentStreak: 3, longestStreak: 7),
               ),
               HabitModel(
                 id: 'h3',
                 name: 'Archived',
                 createdAt: DateTime(2024, 1, 1),
                 isArchived: true,
-                streak: const StreakModel(
-                  currentStreak: 0,
-                  longestStreak: 15,
-                ),
+                streak: const StreakModel(currentStreak: 0, longestStreak: 15),
               ),
             ]);
           }),
@@ -146,12 +137,11 @@ void main() {
               ),
             ]);
           }),
-          todayCompletionsProvider.overrideWith((ref) async => [
-                CompletionModel(
-                  id: 'c-1',
-                  completedAt: DateTime.now(),
-                ),
-              ]),
+          todayCompletionsProvider.overrideWith(
+            (ref) async => [
+              CompletionModel(id: 'c-1', completedAt: DateTime.now()),
+            ],
+          ),
         ],
       );
       addTearDown(container.dispose);
@@ -211,17 +201,18 @@ class _FakeHabitRepository implements HabitRepository {
   Future<void> deleteHabit(String id) async {}
 
   @override
-  Future<CompletionModel> completeHabit(String habitId,
-          {String? note}) async =>
+  Future<CompletionModel> completeHabit(String habitId, {String? note}) async =>
       CompletionModel(id: '', completedAt: DateTime.now());
 
   @override
   Future<void> uncompleteHabit(String completionId) async {}
 
   @override
-  Future<List<CompletionModel>> getCompletions(
-          {String? habitId, int page = 1, int limit = 100}) async =>
-      [];
+  Future<List<CompletionModel>> getCompletions({
+    String? habitId,
+    int page = 1,
+    int limit = 100,
+  }) async => [];
 
   @override
   Future<StreakModel> getStreak(String habitId) async => const StreakModel();
@@ -230,7 +221,7 @@ class _FakeHabitRepository implements HabitRepository {
 /// A HabitsNotifier that starts with a pre-loaded list of habits.
 class _PreloadedHabitsNotifier extends HabitsNotifier {
   _PreloadedHabitsNotifier(List<HabitModel> habits)
-      : super(_FakeHabitRepository()) {
+    : super(_FakeHabitRepository()) {
     state = HabitsState(habits: habits);
   }
 }

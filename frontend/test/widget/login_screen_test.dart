@@ -16,9 +16,7 @@ void main() {
         ),
         ...overrides,
       ],
-      child: const MaterialApp(
-        home: LoginScreen(),
-      ),
+      child: const MaterialApp(home: LoginScreen()),
     );
   }
 
@@ -54,8 +52,9 @@ void main() {
       );
     });
 
-    testWidgets('shows validation error when email is empty on submit',
-        (tester) async {
+    testWidgets('shows validation error when email is empty on submit', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -65,8 +64,9 @@ void main() {
       expect(find.text('Please enter your email'), findsOneWidget);
     });
 
-    testWidgets('shows validation error when password is empty on submit',
-        (tester) async {
+    testWidgets('shows validation error when password is empty on submit', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -81,14 +81,13 @@ void main() {
       expect(find.text('Please enter your password'), findsOneWidget);
     });
 
-    testWidgets('shows loading indicator when auth status is loading',
-        (tester) async {
+    testWidgets('shows loading indicator when auth status is loading', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         createTestWidget(
           overrides: [
-            authStateProvider.overrideWith(
-              (ref) => _LoadingAuthNotifier(),
-            ),
+            authStateProvider.overrideWith((ref) => _LoadingAuthNotifier()),
           ],
         ),
       );
@@ -97,8 +96,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('shows error message when auth status is error',
-        (tester) async {
+    testWidgets('shows error message when auth status is error', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         createTestWidget(
           overrides: [
@@ -117,9 +117,7 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           overrides: [
-            authStateProvider.overrideWith(
-              (ref) => _LoadingAuthNotifier(),
-            ),
+            authStateProvider.overrideWith((ref) => _LoadingAuthNotifier()),
           ],
         ),
       );
@@ -146,10 +144,7 @@ class _LoadingAuthNotifier extends AuthNotifier {
 
 class _ErrorAuthNotifier extends AuthNotifier {
   _ErrorAuthNotifier(String message) : super(_FakeAuthRepository()) {
-    state = AuthState(
-      status: AuthStatus.error,
-      errorMessage: message,
-    );
+    state = AuthState(status: AuthStatus.error, errorMessage: message);
   }
 }
 

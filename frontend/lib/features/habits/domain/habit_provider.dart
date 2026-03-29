@@ -118,23 +118,27 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
   }
 }
 
-final habitsProvider =
-    StateNotifierProvider<HabitsNotifier, HabitsState>((ref) {
+final habitsProvider = StateNotifierProvider<HabitsNotifier, HabitsState>((
+  ref,
+) {
   final repository = ref.read(habitRepositoryProvider);
   return HabitsNotifier(repository);
 });
 
 /// Provider to get a single habit from the already-loaded list.
-final selectedHabitProvider =
-    Provider.family<HabitModel?, String>((ref, habitId) {
+final selectedHabitProvider = Provider.family<HabitModel?, String>((
+  ref,
+  habitId,
+) {
   final habitsState = ref.watch(habitsProvider);
   final matches = habitsState.habits.where((h) => h.id == habitId);
   return matches.isNotEmpty ? matches.first : null;
 });
 
 /// Provider that returns today's completions across all habits.
-final todayCompletionsProvider =
-    FutureProvider<List<CompletionModel>>((ref) async {
+final todayCompletionsProvider = FutureProvider<List<CompletionModel>>((
+  ref,
+) async {
   final repo = ref.read(habitRepositoryProvider);
   final completions = await repo.getCompletions();
   final now = DateTime.now();

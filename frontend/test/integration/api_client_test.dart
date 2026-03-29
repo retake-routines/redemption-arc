@@ -13,9 +13,7 @@ void main() {
       await storage.saveToken('my-jwt-token');
 
       final container = ProviderContainer(
-        overrides: [
-          localStorageProvider.overrideWithValue(storage),
-        ],
+        overrides: [localStorageProvider.overrideWithValue(storage)],
       );
       addTearDown(container.dispose);
 

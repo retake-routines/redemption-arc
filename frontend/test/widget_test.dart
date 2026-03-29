@@ -12,21 +12,17 @@ void main() {
       routes: [
         GoRoute(
           path: '/test',
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('HabitPal')),
-          ),
+          builder:
+              (context, state) =>
+                  const Scaffold(body: Center(child: Text('HabitPal'))),
         ),
       ],
     );
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          appRouterProvider.overrideWithValue(testRouter),
-        ],
-        child: MaterialApp.router(
-          routerConfig: testRouter,
-        ),
+        overrides: [appRouterProvider.overrideWithValue(testRouter)],
+        child: MaterialApp.router(routerConfig: testRouter),
       ),
     );
 

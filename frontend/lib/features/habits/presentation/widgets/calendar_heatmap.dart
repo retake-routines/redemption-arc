@@ -49,12 +49,11 @@ class CalendarHeatmap extends StatelessWidget {
                   child: Text(
                     dayLabels[i],
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          fontSize: 9,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withAlpha(128),
-                        ),
+                      fontSize: 9,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha(128),
+                    ),
                   ),
                 );
               }),
@@ -66,10 +65,10 @@ class CalendarHeatmap extends StatelessWidget {
                 builder: (context, constraints) {
                   final actualWeeks =
                       ((today.difference(adjustedStart).inDays + 1) / 7).ceil();
-                  final cellSize =
-                      ((constraints.maxWidth - (actualWeeks - 1) * 2) /
-                              actualWeeks)
-                          .clamp(6.0, 14.0);
+                  final cellSize = ((constraints.maxWidth -
+                              (actualWeeks - 1) * 2) /
+                          actualWeeks)
+                      .clamp(6.0, 14.0);
 
                   return Wrap(
                     direction: Axis.vertical,
@@ -83,8 +82,7 @@ class CalendarHeatmap extends StatelessWidget {
                       );
 
                       if (date.isAfter(today)) {
-                        return SizedBox(
-                            width: cellSize, height: cellSize);
+                        return SizedBox(width: cellSize, height: cellSize);
                       }
 
                       final isCompleted = completedSet.contains(date);
@@ -96,11 +94,12 @@ class CalendarHeatmap extends StatelessWidget {
                           width: cellSize,
                           height: cellSize,
                           decoration: BoxDecoration(
-                            color: isCompleted
-                                ? AppColors.heatmapLevel3
-                                : (isDark
-                                    ? AppColors.heatmapEmptyDark
-                                    : AppColors.heatmapEmpty),
+                            color:
+                                isCompleted
+                                    ? AppColors.heatmapLevel3
+                                    : (isDark
+                                        ? AppColors.heatmapEmptyDark
+                                        : AppColors.heatmapEmpty),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -117,10 +116,23 @@ class CalendarHeatmap extends StatelessWidget {
   }
 
   Widget _buildMonthLabels(
-      BuildContext context, DateTime start, DateTime today) {
+    BuildContext context,
+    DateTime start,
+    DateTime today,
+  ) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
 
     final labels = <Widget>[];
@@ -134,10 +146,9 @@ class CalendarHeatmap extends StatelessWidget {
           Text(
             months[current.month - 1],
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontSize: 9,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withAlpha(128),
-                ),
+              fontSize: 9,
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(128),
+            ),
           ),
         );
         labels.add(const SizedBox(width: 8));

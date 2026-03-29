@@ -8,10 +8,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: EmptyState(
-              icon: Icons.inbox,
-              message: 'No items yet',
-            ),
+            body: EmptyState(icon: Icons.inbox, message: 'No items yet'),
           ),
         ),
       );
@@ -20,34 +17,34 @@ void main() {
       expect(find.text('No items yet'), findsOneWidget);
     });
 
-    testWidgets('renders action button when actionLabel and onAction provided',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: EmptyState(
-              icon: Icons.inbox,
-              message: 'No items yet',
-              actionLabel: 'Add Item',
-              onAction: () {},
+    testWidgets(
+      'renders action button when actionLabel and onAction provided',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EmptyState(
+                icon: Icons.inbox,
+                message: 'No items yet',
+                actionLabel: 'Add Item',
+                onAction: () {},
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      expect(find.text('Add Item'), findsOneWidget);
-      expect(find.byType(FilledButton), findsOneWidget);
-    });
+        expect(find.text('Add Item'), findsOneWidget);
+        expect(find.byType(FilledButton), findsOneWidget);
+      },
+    );
 
-    testWidgets('does not render action button when actionLabel is null',
-        (tester) async {
+    testWidgets('does not render action button when actionLabel is null', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: EmptyState(
-              icon: Icons.inbox,
-              message: 'No items yet',
-            ),
+            body: EmptyState(icon: Icons.inbox, message: 'No items yet'),
           ),
         ),
       );
@@ -75,8 +72,9 @@ void main() {
       expect(actionFired, true);
     });
 
-    testWidgets('does not render action button when onAction is null',
-        (tester) async {
+    testWidgets('does not render action button when onAction is null', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

@@ -23,16 +23,18 @@ class HabitCard extends StatelessWidget {
       curve: Curves.easeInOut,
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isCompleted
-            ? Theme.of(context).colorScheme.primary.withAlpha(30)
-            : Theme.of(context).cardTheme.color ??
-                Theme.of(context).colorScheme.surface,
+        color:
+            isCompleted
+                ? Theme.of(context).colorScheme.primary.withAlpha(30)
+                : Theme.of(context).cardTheme.color ??
+                    Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isCompleted
-                ? Theme.of(context).colorScheme.primary.withAlpha(40)
-                : Colors.black12,
+            color:
+                isCompleted
+                    ? Theme.of(context).colorScheme.primary.withAlpha(40)
+                    : Colors.black12,
             blurRadius: isCompleted ? 8.0 : 4.0,
             offset: Offset(0, isCompleted ? 2 : 1),
           ),
@@ -51,16 +53,18 @@ class HabitCard extends StatelessWidget {
                   onPressed: onComplete,
                   icon: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) =>
-                        ScaleTransition(scale: animation, child: child),
+                    transitionBuilder:
+                        (child, animation) =>
+                            ScaleTransition(scale: animation, child: child),
                     child: Icon(
                       isCompleted
                           ? Icons.check_circle
                           : Icons.check_circle_outline,
                       key: ValueKey<bool>(isCompleted),
-                      color: isCompleted
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.primary,
+                      color:
+                          isCompleted
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.primary,
                       size: 32,
                     ),
                   ),
@@ -76,15 +80,15 @@ class HabitCard extends StatelessWidget {
                         children: [
                           Text(
                             habit.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  decoration: isCompleted
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              decoration:
+                                  isCompleted
                                       ? TextDecoration.lineThrough
                                       : null,
-                                ),
+                            ),
                           ),
                           if (habit.description.isNotEmpty)
                             Text(
@@ -108,9 +112,9 @@ class HabitCard extends StatelessWidget {
                   Text(
                     '${habit.streak.currentStreak}',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: AppColors.streak,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      color: AppColors.streak,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
                 const SizedBox(width: 8),

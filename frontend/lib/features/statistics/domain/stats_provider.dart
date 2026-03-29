@@ -94,7 +94,6 @@ class StatsNotifier extends StateNotifier<StatsState> {
   }
 }
 
-final statsProvider =
-    StateNotifierProvider<StatsNotifier, StatsState>((ref) {
+final statsProvider = StateNotifierProvider<StatsNotifier, StatsState>((ref) {
   return StatsNotifier(ref);
 });

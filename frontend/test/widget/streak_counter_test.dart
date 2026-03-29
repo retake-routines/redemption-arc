@@ -6,17 +6,10 @@ import 'package:habitpal_frontend/features/habits/presentation/widgets/streak_co
 void main() {
   group('StreakCounter', () {
     testWidgets('renders current streak value', (tester) async {
-      const streak = StreakModel(
-        currentStreak: 5,
-        longestStreak: 10,
-      );
+      const streak = StreakModel(currentStreak: 5, longestStreak: 10);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: StreakCounter(streak: streak),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: StreakCounter(streak: streak))),
       );
       await tester.pumpAndSettle();
 
@@ -24,17 +17,10 @@ void main() {
     });
 
     testWidgets('renders longest streak value', (tester) async {
-      const streak = StreakModel(
-        currentStreak: 5,
-        longestStreak: 10,
-      );
+      const streak = StreakModel(currentStreak: 5, longestStreak: 10);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: StreakCounter(streak: streak),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: StreakCounter(streak: streak))),
       );
       await tester.pumpAndSettle();
 
@@ -42,17 +28,10 @@ void main() {
     });
 
     testWidgets('renders fire icon for current streak', (tester) async {
-      const streak = StreakModel(
-        currentStreak: 5,
-        longestStreak: 10,
-      );
+      const streak = StreakModel(currentStreak: 5, longestStreak: 10);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: StreakCounter(streak: streak),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: StreakCounter(streak: streak))),
       );
       await tester.pumpAndSettle();
 
@@ -60,17 +39,10 @@ void main() {
     });
 
     testWidgets('renders trophy icon for longest streak', (tester) async {
-      const streak = StreakModel(
-        currentStreak: 5,
-        longestStreak: 10,
-      );
+      const streak = StreakModel(currentStreak: 5, longestStreak: 10);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: StreakCounter(streak: streak),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: StreakCounter(streak: streak))),
       );
       await tester.pumpAndSettle();
 
@@ -78,17 +50,10 @@ void main() {
     });
 
     testWidgets('renders Current Streak label', (tester) async {
-      const streak = StreakModel(
-        currentStreak: 0,
-        longestStreak: 0,
-      );
+      const streak = StreakModel(currentStreak: 0, longestStreak: 0);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: StreakCounter(streak: streak),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: StreakCounter(streak: streak))),
       );
       await tester.pumpAndSettle();
 
@@ -96,17 +61,10 @@ void main() {
     });
 
     testWidgets('renders Longest Streak label', (tester) async {
-      const streak = StreakModel(
-        currentStreak: 0,
-        longestStreak: 0,
-      );
+      const streak = StreakModel(currentStreak: 0, longestStreak: 0);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: StreakCounter(streak: streak),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: StreakCounter(streak: streak))),
       );
       await tester.pumpAndSettle();
 
@@ -114,17 +72,10 @@ void main() {
     });
 
     testWidgets('renders zero streaks correctly', (tester) async {
-      const streak = StreakModel(
-        currentStreak: 0,
-        longestStreak: 0,
-      );
+      const streak = StreakModel(currentStreak: 0, longestStreak: 0);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: StreakCounter(streak: streak),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: StreakCounter(streak: streak))),
       );
       await tester.pumpAndSettle();
 
