@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:habitpal_frontend/core/theme/app_colors.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/calendar_heatmap.dart';
 import 'package:habitpal_frontend/features/statistics/domain/stats_provider.dart';
@@ -28,10 +29,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
       body:
           stats.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : Padding(
+              : SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
+                    // Activity heatmap card
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -56,24 +58,49 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    _StatCard(
-                      icon: Icons.percent,
-                      title: 'Completion Rate',
-                      value:
-                          '${(stats.overallCompletionRate * 100).toStringAsFixed(1)}%',
-                    ),
-                    const SizedBox(height: 12),
-                    _StatCard(
-                      icon: Icons.check_circle,
-                      title: 'Total Completions',
-                      value: '${stats.totalCompletions}',
-                    ),
-                    const SizedBox(height: 12),
-                    _StatCard(
-                      icon: Icons.calendar_today,
-                      title: 'Active Days',
-                      value: '${stats.activeDays}',
+                    const SizedBox(height: 16),
+                    // Stats grid: 2 columns
+                    GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1.4,
+                      children: [
+                        _StatGridCard(
+                          icon: Icons.checklist,
+                          title: 'Total Habits',
+                          value: '${stats.totalHabits}',
+                        ),
+                        _StatGridCard(
+                          icon: Icons.local_fire_department,
+                          iconColor: AppColors.streak,
+                          title: 'Best Streak',
+                          value: '${stats.bestStreak}',
+                        ),
+                        _StatGridCard(
+                          icon: Icons.trending_up,
+                          title: 'Avg Streak',
+                          value: '${stats.averageStreak}',
+                        ),
+                        _StatGridCard(
+                          icon: Icons.percent,
+                          title: 'Completion Rate',
+                          value:
+                              '${(stats.overallCompletionRate * 100).toStringAsFixed(1)}%',
+                        ),
+                        _StatGridCard(
+                          icon: Icons.check_circle,
+                          title: 'Total Completions',
+                          value: '${stats.totalCompletions}',
+                        ),
+                        _StatGridCard(
+                          icon: Icons.calendar_today,
+                          title: 'Active Days',
+                          value: '${stats.activeDays}',
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -112,29 +139,46 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   }
 }
 
-class _StatCard extends StatelessWidget {
+class _StatGridCard extends StatelessWidget {
   final IconData icon;
+  final Color? iconColor;
   final String title;
   final String value;
 
-  const _StatCard({
+  const _StatGridCard({
     required this.icon,
+    this.iconColor,
     required this.title,
     required this.value,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
-      child: ListTile(
-        leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
-        title: Text(title),
-        trailing: Text(
-          value,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 24, color: iconColor ?? theme.colorScheme.primary),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              title,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(179),
+              ),
+            ),
+          ],
         ),
       ),
     );
