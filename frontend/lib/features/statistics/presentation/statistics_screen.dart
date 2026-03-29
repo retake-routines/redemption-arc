@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
+import 'package:habitpal_frontend/features/habits/presentation/widgets/calendar_heatmap.dart';
 import 'package:habitpal_frontend/features/statistics/domain/stats_provider.dart';
 
 class StatisticsScreen extends ConsumerStatefulWidget {
@@ -31,6 +33,30 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Activity',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 12),
+                          CalendarHeatmap(
+                            completedDates: ref
+                                .watch(habitsProvider)
+                                .habits
+                                .expand((h) => h.completions)
+                                .map((c) => c.completedAt)
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   _StatCard(
                     icon: Icons.percent,
                     title: 'Completion Rate',

@@ -11,6 +11,17 @@ class HabitDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(habitsProvider.select((s) => s.errorMessage), (prev, next) {
+      if (next != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    });
+
     final habitsState = ref.watch(habitsProvider);
     final habit = habitsState.habits.where((h) => h.id == habitId).firstOrNull;
 
@@ -93,7 +104,11 @@ class HabitDetailScreen extends ConsumerWidget {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 16),
-                    const CalendarHeatmap(),
+                    CalendarHeatmap(
+                      completedDates: habit.completions
+                          .map((c) => c.completedAt)
+                          .toList(),
+                    ),
                   ],
                 ),
               ),
