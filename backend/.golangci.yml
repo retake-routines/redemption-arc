@@ -46,3 +46,4 @@ issues:
   max-same-issues: 10
   exclude-dirs:
     - docs
+    - proto
