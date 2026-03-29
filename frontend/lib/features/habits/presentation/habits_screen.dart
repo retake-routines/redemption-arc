@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
+import 'package:habitpal_frontend/features/habits/presentation/widgets/create_habit_dialog.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/habit_card.dart';
 
 class HabitsScreen extends ConsumerStatefulWidget {
@@ -20,6 +21,17 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(habitsProvider.select((s) => s.errorMessage), (prev, next) {
+      if (next != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    });
+
     final habitsState = ref.watch(habitsProvider);
 
     return Scaffold(
@@ -84,7 +96,14 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
                 ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Navigate to add habit screen
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            builder: (_) => const CreateHabitDialog(),
+          );
         },
         child: const Icon(Icons.add),
       ),
