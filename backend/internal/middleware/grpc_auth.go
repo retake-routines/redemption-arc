@@ -23,9 +23,9 @@ func GRPCAuthMiddleware(authGRPCAddr string) gin.HandlerFunc {
 	conn, err := grpc.Dial(authGRPCAddr, //nolint:staticcheck
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithKeepaliveParams(keepalive.ClientParameters{
-			Time:                30 * time.Second,
-			Timeout:             10 * time.Second,
-			PermitWithoutStream: true,
+			Time:                5 * time.Minute,
+			Timeout:             20 * time.Second,
+			PermitWithoutStream: false,
 		}),
 	)
 	if err != nil {
