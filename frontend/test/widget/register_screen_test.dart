@@ -19,10 +19,7 @@ void main() {
   }
 
   group('RegisterScreen', () {
-    Future<void> pumpLargeScreen(
-      WidgetTester tester,
-      Widget widget,
-    ) async {
+    Future<void> pumpLargeScreen(WidgetTester tester, Widget widget) async {
       tester.view.physicalSize = const Size(1080, 1920);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
