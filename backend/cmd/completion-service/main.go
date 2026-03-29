@@ -60,8 +60,6 @@ func main() {
 
 	// Setup HTTP server with Gin
 	r := gin.Default()
-	r.Use(middleware.CORSMiddleware())
-
 	// Protected routes using gRPC auth middleware
 	completions := r.Group("/completions")
 	completions.Use(middleware.GRPCAuthMiddleware(authGRPCAddr))

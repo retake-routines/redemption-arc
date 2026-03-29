@@ -84,7 +84,6 @@ func reverseProxy(target string, basePath string) gin.HandlerFunc {
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
-
 	return func(c *gin.Context) {
 		// Reconstruct the path for the upstream service
 		// c.Request.URL.Path is the full original path, e.g. /api/v1/habits/123

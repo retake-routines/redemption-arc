@@ -13,7 +13,6 @@ import (
 
 	"habitpal-backend/internal/config"
 	"habitpal-backend/internal/handler"
-	"habitpal-backend/internal/middleware"
 	"habitpal-backend/internal/repository"
 	"habitpal-backend/internal/service"
 	authpb "habitpal-backend/proto/gen/auth"
@@ -106,7 +105,7 @@ func main() {
 
 	// Setup HTTP server with Gin
 	r := gin.Default()
-	r.Use(middleware.CORSMiddleware())
+
 
 	auth := r.Group("/auth")
 	{
