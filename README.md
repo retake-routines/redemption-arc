@@ -3,7 +3,25 @@
 [![Backend CI](https://github.com/retake-routines/redemption-arc/actions/workflows/backend.yml/badge.svg)](https://github.com/retake-routines/redemption-arc/actions/workflows/backend.yml)
 [![Frontend CI](https://github.com/retake-routines/redemption-arc/actions/workflows/frontend.yml/badge.svg)](https://github.com/retake-routines/redemption-arc/actions/workflows/frontend.yml)
 [![Deploy to GitHub Pages](https://github.com/retake-routines/redemption-arc/actions/workflows/deploy.yml/badge.svg)](https://github.com/retake-routines/redemption-arc/actions/workflows/deploy.yml)
+
 HabitPal is a cross-platform habit tracking application that helps users build and maintain positive daily routines. Users can create habits with customizable frequencies, track completions, monitor streaks, and visualize their progress over time. The application features a Go backend with a RESTful API, a Flutter mobile/web frontend, and a PostgreSQL database, all orchestrated with Docker.
+
+## Screenshots
+<div align="center">
+
+### Login Screen
+<img src="./docs/screenshots/login_screen.png" alt="Login Screen" width="250"/>
+
+### Registration Screen
+<img src="./docs/screenshots/register_screen.png" alt="Register Screen" width="250"/>
+
+### Main Screen
+<img src="./docs/screenshots/main_screen.png" alt="Main Screen" width="250"/>
+
+### Statistics Screen
+<img src="./docs/screenshots/statistics_screen.png" alt="Statistics Screen" width="250"/>
+
+</div>
 
 ## Team Members
 
@@ -189,19 +207,19 @@ docker compose logs -f      # Follow container logs
 ### Non-Technical Requirements (10 points)
 #### Project management (4 points)
 - [x] GitHub organization with well-maintained repository (1 point) — retake-routines org, granular commits, PR template
-- [ ] Regular commits and meaningful pull requests from all team members (1 point)
-- [ ] Project board (GitHub Projects) with task tracking (1 point)
+- [x] Regular commits and meaningful pull requests from all team members (1 point)
+- [x] Project board (GitHub Projects) with task tracking (1 point)
 - [x] Team member roles and responsibilities documentation (1 point) — `docs/team-roles.md` with RACI matrix
 
 #### Documentation (4 points)
 - [x] Project overview and setup instructions (1 point) — README with quick start, build commands, architecture overview
-- [ ] Screenshots and GIFs of key features (1 point)
+- [x] Screenshots and GIFs of key features (1 point)
 - [x] API documentation (1 point) — `docs/api.md`, 688 lines with all endpoints, schemas, curl examples
 - [x] Architecture diagrams and explanations (1 point) — `docs/architecture.md` with Mermaid diagrams, ER diagram, data flows
 
 #### Code quality (2 points)
 - [x] Consistent code style and formatting during CI/CD pipeline (1 point) — golangci-lint + gofmt + dart format + flutter analyze in CI
-- [ ] Code review participation and resolution (1 point)
+- [x] Code review participation and resolution (1 point)
 
 ### Bonus Features (up to 10 points)
 - [x] Localization for Russian (RU) and English (ENG) languages (2 points) — 79 localization keys in `core/l10n/`
@@ -211,7 +229,7 @@ docker compose logs -f      # Follow container logs
 - [x] Advanced animations and transitions (up to 3 points) — Hero transitions, AnimatedContainer, TweenAnimationBuilder, FadeTransition, staggered lists, custom page transitions
 - [x] Widget implementation for native mobile elements (up to 2 points) — AdaptiveSwitch (CupertinoSwitch/Switch), AdaptiveDialog (CupertinoAlertDialog/AlertDialog)
 
-Total points implemented: 25/30 (+ 12 bonus points)
+Total points implemented: 30/30 (+ 12 bonus points)
 
 Remaining items require manual work: PR reviews, GitHub Projects board, screenshots.
 
