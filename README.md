@@ -21,6 +21,12 @@ HabitPal is a cross-platform habit tracking application that helps users build a
 ### Statistics Screen
 <img src="./docs/screenshots/statistics_screen.png" alt="Statistics Screen" width="250"/>
 
+### New Habit Screen
+<img src="./docs/screenshots/new_habit.png" alt="New Habit Screen" width="250"/>
+
+### Profile Screen
+<img src="./docs/screenshots/profile.png" alt="Profile Screen" width="250"/>
+
 </div>
 
 ## Team Members
@@ -77,6 +83,33 @@ flutter run -d chrome  # web browser
 
 The app connects to the backend at `http://localhost:8080/api/v1`.
 
+### Frontend Base URL (important for real devices)
+
+Before running the frontend, verify `baseUrl` in `frontend/lib/core/network/api_endpoints.dart`:
+
+```dart
+static const String baseUrl = 'http://localhost:8080/api/v1';
+```
+
+For a physical iOS device, replace `localhost` with your Mac local network IP:
+
+```dart
+// Example:
+static const String baseUrl = 'http://192.168.x.x:8080/api/v1';
+```
+
+If needed, you can run platform-specific commands:
+
+```bash
+cd frontend
+flutter pub get
+flutter run -d macos   # macOS desktop
+flutter run -d ios     # iOS simulator
+flutter run -d chrome  # web
+```
+
+For a physical iOS device, open `frontend/ios/Runner.xcworkspace` in Xcode and configure signing (`Runner` -> `Signing & Capabilities` -> Team).
+
 ### 3. Access Swagger docs
 
 Open [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html) in your browser.
@@ -86,6 +119,41 @@ Open [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/in
 ```bash
 docker compose down        # stop containers
 docker compose down -v     # stop and remove database volume
+```
+
+### 5. Local authentication test
+
+#### Option A: through the app UI
+
+1. Start backend: `docker compose up --build`
+2. Start frontend: `flutter run`
+3. On Login screen, click `Don't have an account? Register`
+4. Fill in display name, email (e.g. `test@test.com`), password (min 6 chars)
+5. Submit registration to sign in automatically
+
+#### Option B: through API (curl)
+
+Register:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"123456","display_name":"Test User"}'
+```
+
+Login:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"123456"}'
+```
+
+Authorized request example:
+
+```bash
+curl http://localhost:8080/api/v1/habits \
+  -H "Authorization: Bearer <your_token>"
 ```
 
 ### Environment Configuration
@@ -178,6 +246,36 @@ docker compose up --build   # Start backend + database
 docker compose down -v      # Stop and remove volumes
 docker compose logs -f      # Follow container logs
 ```
+
+## App Routes
+
+### Public routes
+
+| Screen | Route | Description |
+|-------|---------|----------|
+| **Login** | `/login` | Sign in with email and password |
+| **Register** | `/register` | Create account with name, email, password, password confirmation |
+
+### Protected routes (require authentication)
+
+| Screen | Route | Description |
+|-------|---------|----------|
+| **Habits** | `/habits` | Habit list with cards and "+" action to create a new habit |
+| **Habit Detail** | `/habits/:id` | Habit details, streak, calendar, completion action |
+| **Statistics** | `/statistics` | Aggregated progress, best streak, completion rate |
+| **Profile** | `/profile` | Theme switch, language (EN/RU), logout |
+
+Main app navigation between protected screens is handled by a bottom navigation bar.
+
+## Troubleshooting
+
+| Problem | Solution |
+|----------|---------|
+| `Connection refused` on iOS | Check `baseUrl`: simulator can use `localhost`, physical device should use your Mac LAN IP |
+| Docker containers do not start | Make sure Docker Desktop is running and has enough resources |
+| `flutter run` fails on macOS | Run `flutter doctor` and install missing dependencies |
+| Database is not initialized | Recreate volumes: `docker compose down -v && docker compose up --build` |
+| Port `8080` is already in use | Stop conflicting process or change exposed backend port in `docker-compose.yml` |
 
 ## Implementation Checklist
 
