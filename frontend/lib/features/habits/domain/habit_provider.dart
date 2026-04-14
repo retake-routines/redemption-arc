@@ -1,6 +1,10 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habitpal_frontend/features/habits/data/habit_repository.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_error_codes.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_week_utils.dart';
 
 /// State class holding the habits list, loading flag, and optional error.
 /// Kept compatible with the existing presentation layer.
@@ -39,14 +43,54 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
     try {
       final habits = await _repository.getHabits();
 
+      // List endpoint does not embed completions; load once and attach per habit.
+      List<CompletionModel> allCompletions = [];
+      try {
+        allCompletions = await _repository.getCompletions(limit: 500);
+      } catch (_) {
+        // Completions optional for streak-only view; UI will show empty activity.
+      }
+
+      final byHabit = <String, List<CompletionModel>>{};
+      for (final c in allCompletions) {
+        if (c.habitId.isEmpty) continue;
+        byHabit.putIfAbsent(c.habitId, () => []).add(c);
+      }
+      final today = DateUtils.dateOnly(DateTime.now());
+      final now = DateTime.now();
+
       // Fetch streak data for each habit in parallel
       final enrichedHabits = await Future.wait(
         habits.map((habit) async {
+          final forHabit = List<CompletionModel>.from(
+            byHabit[habit.id] ?? const [],
+          )..sort((a, b) => b.completedAt.compareTo(a.completedAt));
+
+          // Daily: completion today. Weekly: current local week meets frequency_value.
+          final completedToday =
+              habit.frequency == 'weekly'
+                  ? forHabit
+                          .where(
+                            (c) => isSameLocalCalendarWeek(c.completedAt, now),
+                          )
+                          .length >=
+                      habit.targetCount
+                  : forHabit.any(
+                    (c) => DateUtils.dateOnly(c.completedAt.toLocal()) == today,
+                  );
+
           try {
             final streak = await _repository.getStreak(habit.id);
-            return habit.copyWith(streak: streak);
+            return habit.copyWith(
+              streak: streak,
+              completions: forHabit,
+              completedToday: completedToday,
+            );
           } catch (_) {
-            return habit;
+            return habit.copyWith(
+              completions: forHabit,
+              completedToday: completedToday,
+            );
           }
         }),
       );
@@ -117,7 +161,48 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
     }
   }
 
+  /// Undoes today's completion, or for weekly habits all completions in the
+  /// current calendar week (Mon–Sun, local).
+  Future<void> undoTodayCompletion(String habitId) async {
+    final habit = state.habits.where((h) => h.id == habitId).firstOrNull;
+    if (habit == null) return;
+    try {
+      if (habit.frequency == 'weekly') {
+        final now = DateTime.now();
+        final ids =
+            habit.completions
+                .where((c) => isSameLocalCalendarWeek(c.completedAt, now))
+                .map((c) => c.id)
+                .toList();
+        for (final id in ids) {
+          await _repository.uncompleteHabit(id);
+        }
+      } else {
+        final today = DateUtils.dateOnly(DateTime.now());
+        final todayCompletions =
+            habit.completions
+                .where(
+                  (c) => DateUtils.dateOnly(c.completedAt.toLocal()) == today,
+                )
+                .toList()
+              ..sort((a, b) => b.completedAt.compareTo(a.completedAt));
+        if (todayCompletions.isEmpty) return;
+        await _repository.uncompleteHabit(todayCompletions.first.id);
+      }
+      await loadHabits();
+    } catch (e) {
+      state = state.copyWith(errorMessage: _friendlyError(e));
+    }
+  }
+
   String _friendlyError(Object e) {
+    if (e is DioException && e.response?.statusCode == 409) {
+      final data = e.response?.data;
+      if (data is Map &&
+          data['error'] == 'template_habit_already_exists') {
+        return kHabitErrorTemplateAlreadyExists;
+      }
+    }
     return e.toString().replaceFirst('Exception: ', '');
   }
 }

@@ -15,7 +15,6 @@ void main() {
             // Manually set state with test data
             return notifier;
           }),
-          todayCompletionsProvider.overrideWith((ref) async => []),
         ],
       );
       addTearDown(container.dispose);
@@ -104,7 +103,6 @@ void main() {
               ),
             ]);
           }),
-          todayCompletionsProvider.overrideWith((ref) async => []),
         ],
       );
       addTearDown(container.dispose);
@@ -129,19 +127,23 @@ void main() {
                 id: 'h1',
                 name: 'Run',
                 createdAt: DateTime(2024, 1, 1),
+                completedToday: true,
+                completions: [
+                  CompletionModel(
+                    id: 'c-1',
+                    habitId: 'h1',
+                    completedAt: DateTime.now(),
+                  ),
+                ],
               ),
               HabitModel(
                 id: 'h2',
                 name: 'Read',
                 createdAt: DateTime(2024, 1, 1),
+                completedToday: false,
               ),
             ]);
           }),
-          todayCompletionsProvider.overrideWith(
-            (ref) async => [
-              CompletionModel(id: 'c-1', completedAt: DateTime.now()),
-            ],
-          ),
         ],
       );
       addTearDown(container.dispose);
@@ -150,7 +152,7 @@ void main() {
       await statsNotifier.loadStats();
 
       final state = container.read(statsProvider);
-      // 1 completion out of 2 active habits = 0.5
+      // 1 of 2 active habits done today
       expect(state.overallCompletionRate, 0.5);
       expect(state.totalCompletions, 1);
     });
@@ -161,7 +163,6 @@ void main() {
           habitsProvider.overrideWith((ref) {
             return _PreloadedHabitsNotifier([]);
           }),
-          todayCompletionsProvider.overrideWith((ref) async => []),
         ],
       );
       addTearDown(container.dispose);

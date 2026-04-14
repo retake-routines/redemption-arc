@@ -64,6 +64,26 @@ func TestHandleCreate_201(t *testing.T) {
 	mockRepo.AssertExpectations(t)
 }
 
+func TestHandleCreate_409_TemplateDuplicate(t *testing.T) {
+	mockRepo := new(mocks.MockHabitRepository)
+	handler, router := setupHabitHandler(mockRepo)
+	router.POST("/habits", authMiddleware("user-1"), handler.HandleCreate)
+
+	mockRepo.On("ExistsActiveByTemplateKey", mock.Anything, "user-1", "sport").
+		Return(true, nil)
+
+	body := `{"title":"Sport","frequency_type":"daily","frequency_value":1,"template_key":"sport"}`
+	req := httptest.NewRequest(http.MethodPost, "/habits", bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusConflict, w.Code)
+	mockRepo.AssertNotCalled(t, "Create")
+	mockRepo.AssertExpectations(t)
+}
+
 func TestHandleCreate_400(t *testing.T) {
 	mockRepo := new(mocks.MockHabitRepository)
 	handler, router := setupHabitHandler(mockRepo)

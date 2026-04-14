@@ -260,6 +260,19 @@ void main() {
       expect(updated.name, 'Updated');
       expect(updated.id, 'habit-1');
     });
+
+    test('fromJson parses template_key', () {
+      final json = {
+        'id': 'h1',
+        'title': 'Water',
+        'template_key': 'water',
+        'created_at': '2024-01-01T00:00:00.000Z',
+      };
+
+      final habit = HabitModel.fromJson(json);
+
+      expect(habit.templateKey, 'water');
+    });
   });
 
   group('CompletionModel', () {

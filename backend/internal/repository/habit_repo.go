@@ -22,6 +22,7 @@ type HabitRepository interface {
 	Update(ctx context.Context, habit *models.Habit) error
 	Delete(ctx context.Context, id string) error
 	CountByUserID(ctx context.Context, userID string) (int, error)
+	ExistsActiveByTemplateKey(ctx context.Context, userID, templateKey string) (bool, error)
 }
 
 // PostgresHabitRepository implements HabitRepository using PostgreSQL.
@@ -37,9 +38,14 @@ func NewPostgresHabitRepository(pool *pgxpool.Pool) *PostgresHabitRepository {
 // Create inserts a new habit into the database. The habit's ID, CreatedAt, and UpdatedAt
 // are populated by the database via RETURNING.
 func (r *PostgresHabitRepository) Create(ctx context.Context, habit *models.Habit) error {
+	var templateKey interface{}
+	if habit.TemplateKey != "" {
+		templateKey = habit.TemplateKey
+	}
+
 	query := `
-		INSERT INTO habits (user_id, title, description, icon, color, frequency_type, frequency_value, is_archived)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		INSERT INTO habits (user_id, title, description, icon, color, frequency_type, frequency_value, template_key, is_archived)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING id, created_at, updated_at`
 
 	err := r.pool.QueryRow(ctx, query,
@@ -50,6 +56,7 @@ func (r *PostgresHabitRepository) Create(ctx context.Context, habit *models.Habi
 		habit.Color,
 		habit.FrequencyType,
 		habit.FrequencyValue,
+		templateKey,
 		habit.IsArchived,
 	).Scan(&habit.ID, &habit.CreatedAt, &habit.UpdatedAt)
 	if err != nil {
@@ -61,7 +68,7 @@ func (r *PostgresHabitRepository) Create(ctx context.Context, habit *models.Habi
 // GetByID retrieves a habit by its UUID.
 func (r *PostgresHabitRepository) GetByID(ctx context.Context, id string) (*models.Habit, error) {
 	query := `
-		SELECT id, user_id, title, description, icon, color, frequency_type, frequency_value, is_archived, created_at, updated_at
+		SELECT id, user_id, title, description, icon, color, frequency_type, frequency_value, COALESCE(template_key, ''), is_archived, created_at, updated_at
 		FROM habits
 		WHERE id = $1`
 
@@ -75,6 +82,7 @@ func (r *PostgresHabitRepository) GetByID(ctx context.Context, id string) (*mode
 		&habit.Color,
 		&habit.FrequencyType,
 		&habit.FrequencyValue,
+		&habit.TemplateKey,
 		&habit.IsArchived,
 		&habit.CreatedAt,
 		&habit.UpdatedAt,
@@ -91,7 +99,7 @@ func (r *PostgresHabitRepository) GetByID(ctx context.Context, id string) (*mode
 // GetByUserID retrieves all habits for a user, ordered by created_at descending.
 func (r *PostgresHabitRepository) GetByUserID(ctx context.Context, userID string) ([]models.Habit, error) {
 	query := `
-		SELECT id, user_id, title, description, icon, color, frequency_type, frequency_value, is_archived, created_at, updated_at
+		SELECT id, user_id, title, description, icon, color, frequency_type, frequency_value, COALESCE(template_key, ''), is_archived, created_at, updated_at
 		FROM habits
 		WHERE user_id = $1
 		ORDER BY created_at DESC`
@@ -114,6 +122,7 @@ func (r *PostgresHabitRepository) GetByUserID(ctx context.Context, userID string
 			&h.Color,
 			&h.FrequencyType,
 			&h.FrequencyValue,
+			&h.TemplateKey,
 			&h.IsArchived,
 			&h.CreatedAt,
 			&h.UpdatedAt,
@@ -136,10 +145,17 @@ func (r *PostgresHabitRepository) GetByUserID(ctx context.Context, userID string
 // Update modifies a habit's fields. Only non-nil/non-zero fields in the provided
 // habit struct are updated. The habit struct is updated in place with the new values.
 func (r *PostgresHabitRepository) Update(ctx context.Context, habit *models.Habit) error {
+	var templateKey interface{}
+	if habit.TemplateKey != "" {
+		templateKey = habit.TemplateKey
+	} else {
+		templateKey = nil
+	}
+
 	query := `
 		UPDATE habits
 		SET title = $2, description = $3, icon = $4, color = $5,
-		    frequency_type = $6, frequency_value = $7, is_archived = $8, updated_at = NOW()
+		    frequency_type = $6, frequency_value = $7, template_key = $8, is_archived = $9, updated_at = NOW()
 		WHERE id = $1
 		RETURNING updated_at`
 
@@ -151,6 +167,7 @@ func (r *PostgresHabitRepository) Update(ctx context.Context, habit *models.Habi
 		habit.Color,
 		habit.FrequencyType,
 		habit.FrequencyValue,
+		templateKey,
 		habit.IsArchived,
 	).Scan(&habit.UpdatedAt)
 	if err != nil {
@@ -186,4 +203,22 @@ func (r *PostgresHabitRepository) CountByUserID(ctx context.Context, userID stri
 		return 0, fmt.Errorf("counting habits by user id: %w", err)
 	}
 	return count, nil
+}
+
+// ExistsActiveByTemplateKey reports whether the user already has a non-archived habit for this template.
+func (r *PostgresHabitRepository) ExistsActiveByTemplateKey(ctx context.Context, userID, templateKey string) (bool, error) {
+	if templateKey == "" {
+		return false, nil
+	}
+	query := `
+		SELECT EXISTS(
+			SELECT 1 FROM habits
+			WHERE user_id = $1 AND template_key = $2 AND is_archived = FALSE
+		)`
+	var exists bool
+	err := r.pool.QueryRow(ctx, query, userID, templateKey).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("checking template habit: %w", err)
+	}
+	return exists, nil
 }

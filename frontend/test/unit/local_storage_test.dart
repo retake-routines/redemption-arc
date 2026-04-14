@@ -120,6 +120,31 @@ void main() {
       });
     });
 
+    group('onboarding', () {
+      test('needsOnboardingForUser is true for new user id', () async {
+        expect(await storage.needsOnboardingForUser('u1'), true);
+      });
+
+      test('setOnboardingCompletedForUser clears need for same user', () async {
+        await storage.setOnboardingCompletedForUser('u1');
+        expect(await storage.needsOnboardingForUser('u1'), false);
+      });
+
+      test('different user id needs onboarding again', () async {
+        await storage.setOnboardingCompletedForUser('u1');
+        expect(await storage.needsOnboardingForUser('u2'), true);
+      });
+
+      test('saveOnboardingChoices persists goal and reminder', () async {
+        await storage.saveOnboardingChoices(
+          goalId: 'health',
+          reminderId: 'morning',
+        );
+        expect(await storage.getOnboardingGoal(), 'health');
+        expect(await storage.getOnboardingReminder(), 'morning');
+      });
+    });
+
     group('clearAll', () {
       test('removes all stored data', () async {
         await storage.saveToken('token');

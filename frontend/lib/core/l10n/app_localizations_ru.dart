@@ -238,4 +238,172 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get somethingWentWrong => 'Что-то пошло не так';
+
+  @override
+  String get filterAll => 'Все';
+
+  @override
+  String get filterActive => 'Активные';
+
+  @override
+  String get filterDoneToday => 'Закрытые';
+
+  @override
+  String habitsProgressToday(int completed, int total) {
+    return 'Сегодня выполнено $completed из $total привычек';
+  }
+
+  @override
+  String get progressMessageStart => 'Начнём!';
+
+  @override
+  String get progressMessageKeep => 'Продолжайте!';
+
+  @override
+  String get progressMessageAlmost => 'Почти всё!';
+
+  @override
+  String get progressMessageDone => 'Готово! Отличная работа!';
+
+  @override
+  String get statTotalCompletions => 'Всего выполнений';
+
+  @override
+  String get statActiveDays => 'Активные дни';
+
+  @override
+  String get onboardingTitle => 'Добро пожаловать';
+
+  @override
+  String get onboardingWelcomeTitle => 'Добро пожаловать в HabitPal';
+
+  @override
+  String get onboardingWelcomeSubtitle =>
+      'Несколько шагов, чтобы настроить напоминания и стартовые привычки.';
+
+  @override
+  String get onboardingGoalTitle => 'Что для вас главное?';
+
+  @override
+  String get onboardingGoalSubtitle =>
+      'Мы используем это, чтобы персонализировать опыт.';
+
+  @override
+  String get onboardingGoalHealth => 'Здоровье и энергия';
+
+  @override
+  String get onboardingGoalProductivity => 'Продуктивность и фокус';
+
+  @override
+  String get onboardingGoalCalm => 'Спокойствие и осознанность';
+
+  @override
+  String get onboardingGoalBalance => 'Баланс и привычки';
+
+  @override
+  String get onboardingReminderTitle => 'Когда напоминать?';
+
+  @override
+  String get onboardingReminderSubtitle =>
+      'Позже это можно изменить в настройках.';
+
+  @override
+  String get onboardingReminderMorning => 'Утром';
+
+  @override
+  String get onboardingReminderAfternoon => 'Днём';
+
+  @override
+  String get onboardingReminderEvening => 'Вечером';
+
+  @override
+  String get onboardingReminderAnytime => 'В любое время';
+
+  @override
+  String get onboardingHabitsTitle => 'Стартовые привычки';
+
+  @override
+  String get onboardingHabitsSubtitle => 'Выберите одну или две из шаблонов.';
+
+  @override
+  String get onboardingSelectUpToTwo => 'Не больше двух';
+
+  @override
+  String get onboardingBack => 'Назад';
+
+  @override
+  String get onboardingNext => 'Далее';
+
+  @override
+  String get onboardingStart => 'Начать';
+
+  @override
+  String get onboardingSkip => 'Пропустить';
+
+  @override
+  String get onboardingPickAtLeastOne => 'Выберите хотя бы одну привычку.';
+
+  @override
+  String get onboardingSelectGoal => 'Выберите цель.';
+
+  @override
+  String get onboardingSelectReminder => 'Выберите время напоминаний.';
+
+  @override
+  String get habitTemplatesTitle => 'Шаблоны привычек';
+
+  @override
+  String get habitTemplatesSubtitle =>
+      'Добавить готовую привычку с рекомендованным расписанием.';
+
+  @override
+  String get templateSportTitle => 'Движение';
+
+  @override
+  String get templateSportDesc => 'Короткая тренировка, прогулка или растяжка.';
+
+  @override
+  String get templateSportFrequency => 'Ежедневно · 1 раз';
+
+  @override
+  String get templateWaterTitle => 'Вода';
+
+  @override
+  String get templateWaterDesc => 'Пить достаточно воды в течение дня.';
+
+  @override
+  String get templateWaterFrequency => 'Ежедневно · 8 стаканов';
+
+  @override
+  String get templateSleepTitle => 'Сон';
+
+  @override
+  String get templateSleepDesc => 'Режим сна и спокойный вечер.';
+
+  @override
+  String get templateSleepFrequency => 'Ежедневно · 1 раз';
+
+  @override
+  String get templateReadingTitle => 'Чтение';
+
+  @override
+  String get templateReadingDesc => 'Несколько страниц каждый день.';
+
+  @override
+  String get templateReadingFrequency => 'Ежедневно · 1 раз';
+
+  @override
+  String get templateMeditationTitle => 'Осознанность';
+
+  @override
+  String get templateMeditationDesc => 'Короткая медитация или дыхание.';
+
+  @override
+  String get templateMeditationFrequency => 'Ежедневно · 1 раз';
+
+  @override
+  String get templateAdded => 'Привычка добавлена из шаблона';
+
+  @override
+  String get templateAlreadyExists => 'У вас уже есть эта привычка.';
 }

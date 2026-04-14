@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
 
@@ -47,19 +48,20 @@ class StatsNotifier extends StateNotifier<StatsState> {
 
   StatsNotifier(this._ref) : super(const StatsState());
 
-  /// Derives statistics from the currently loaded habits list.
+  /// Derives statistics from the currently loaded habits list (including
+  /// [HabitModel.completions] and [HabitModel.completedToday] filled by
+  /// [HabitsNotifier.loadHabits]).
   Future<void> loadStats() async {
     state = state.copyWith(isLoading: true);
 
-    final habitsState = _ref.read(habitsProvider);
-    final habits = habitsState.habits;
+    final habits = _ref.read(habitsProvider).habits;
 
     final totalHabits = habits.length;
-    final activeHabits = habits.where((h) => !h.isArchived).length;
+    final activeHabits = habits.where((h) => !h.isArchived).toList();
+    final activeCount = activeHabits.length;
 
-    // Sum up streaks
-    int bestStreak = 0;
-    int totalStreak = 0;
+    var bestStreak = 0;
+    var totalStreak = 0;
     for (final habit in habits) {
       final current = habit.streak.currentStreak;
       final longest = habit.streak.longestStreak;
@@ -70,26 +72,28 @@ class StatsNotifier extends StateNotifier<StatsState> {
     final averageStreak =
         habits.isNotEmpty ? (totalStreak / habits.length).round() : 0;
 
-    // Count today's completions from todayCompletionsProvider
-    int todayCompletions = 0;
-    try {
-      final completions = await _ref.read(todayCompletionsProvider.future);
-      todayCompletions = completions.length;
-    } catch (_) {
-      // If fetch fails, keep 0
+    var totalCompletionsAllTime = 0;
+    final distinctDays = <DateTime>{};
+    for (final h in habits) {
+      totalCompletionsAllTime += h.completions.length;
+      for (final c in h.completions) {
+        distinctDays.add(DateUtils.dateOnly(c.completedAt.toLocal()));
+      }
     }
 
-    // Completion rate: today completions / active habits
+    final completedTodayCount =
+        activeHabits.where((h) => h.completedToday).length;
     final completionRate =
-        activeHabits > 0 ? todayCompletions / activeHabits : 0.0;
+        activeCount > 0 ? completedTodayCount / activeCount : 0.0;
 
     state = StatsState(
       overallCompletionRate: completionRate,
-      totalCompletions: todayCompletions,
-      activeDays: totalHabits, // re-using as "active habits" count
+      totalCompletions: totalCompletionsAllTime,
+      activeDays: distinctDays.length,
       totalHabits: totalHabits,
       bestStreak: bestStreak,
       averageStreak: averageStreak,
+      isLoading: false,
     );
   }
 }

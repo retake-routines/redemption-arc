@@ -559,6 +559,330 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong'**
   String get somethingWentWrong;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get filterActive;
+
+  /// No description provided for @filterDoneToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Done today'**
+  String get filterDoneToday;
+
+  /// No description provided for @habitsProgressToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} habits completed today'**
+  String habitsProgressToday(int completed, int total);
+
+  /// No description provided for @progressMessageStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s get started!'**
+  String get progressMessageStart;
+
+  /// No description provided for @progressMessageKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going!'**
+  String get progressMessageKeep;
+
+  /// No description provided for @progressMessageAlmost.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there!'**
+  String get progressMessageAlmost;
+
+  /// No description provided for @progressMessageDone.
+  ///
+  /// In en, this message translates to:
+  /// **'All done! Great job!'**
+  String get progressMessageDone;
+
+  /// No description provided for @statTotalCompletions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Completions'**
+  String get statTotalCompletions;
+
+  /// No description provided for @statActiveDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Days'**
+  String get statActiveDays;
+
+  /// No description provided for @onboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get onboardingTitle;
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to HabitPal'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A few quick steps to tailor reminders and starter habits to you.'**
+  String get onboardingWelcomeSubtitle;
+
+  /// No description provided for @onboardingGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your main focus?'**
+  String get onboardingGoalTitle;
+
+  /// No description provided for @onboardingGoalSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We will use this to personalize your experience.'**
+  String get onboardingGoalSubtitle;
+
+  /// No description provided for @onboardingGoalHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health & energy'**
+  String get onboardingGoalHealth;
+
+  /// No description provided for @onboardingGoalProductivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Productivity & focus'**
+  String get onboardingGoalProductivity;
+
+  /// No description provided for @onboardingGoalCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm & mindfulness'**
+  String get onboardingGoalCalm;
+
+  /// No description provided for @onboardingGoalBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance & habits'**
+  String get onboardingGoalBalance;
+
+  /// No description provided for @onboardingReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When should we remind you?'**
+  String get onboardingReminderTitle;
+
+  /// No description provided for @onboardingReminderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change this later in settings.'**
+  String get onboardingReminderSubtitle;
+
+  /// No description provided for @onboardingReminderMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get onboardingReminderMorning;
+
+  /// No description provided for @onboardingReminderAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon'**
+  String get onboardingReminderAfternoon;
+
+  /// No description provided for @onboardingReminderEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get onboardingReminderEvening;
+
+  /// No description provided for @onboardingReminderAnytime.
+  ///
+  /// In en, this message translates to:
+  /// **'Any time'**
+  String get onboardingReminderAnytime;
+
+  /// No description provided for @onboardingHabitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick starter habits'**
+  String get onboardingHabitsTitle;
+
+  /// No description provided for @onboardingHabitsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose one or two templates to begin with.'**
+  String get onboardingHabitsSubtitle;
+
+  /// No description provided for @onboardingSelectUpToTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Select up to 2'**
+  String get onboardingSelectUpToTwo;
+
+  /// No description provided for @onboardingBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingBack;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingStart;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingPickAtLeastOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Please pick at least one habit.'**
+  String get onboardingPickAtLeastOne;
+
+  /// No description provided for @onboardingSelectGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a goal.'**
+  String get onboardingSelectGoal;
+
+  /// No description provided for @onboardingSelectReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a reminder time.'**
+  String get onboardingSelectReminder;
+
+  /// No description provided for @habitTemplatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit templates'**
+  String get habitTemplatesTitle;
+
+  /// No description provided for @habitTemplatesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a ready-made habit with a suggested schedule.'**
+  String get habitTemplatesSubtitle;
+
+  /// No description provided for @templateSportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get templateSportTitle;
+
+  /// No description provided for @templateSportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Short workout, walk, or stretch.'**
+  String get templateSportDesc;
+
+  /// No description provided for @templateSportFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily · 1×'**
+  String get templateSportFrequency;
+
+  /// No description provided for @templateWaterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hydration'**
+  String get templateWaterTitle;
+
+  /// No description provided for @templateWaterDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Drink enough water during the day.'**
+  String get templateWaterDesc;
+
+  /// No description provided for @templateWaterFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily · 8 glasses'**
+  String get templateWaterFrequency;
+
+  /// No description provided for @templateSleepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep routine'**
+  String get templateSleepTitle;
+
+  /// No description provided for @templateSleepDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind down and keep a consistent bedtime.'**
+  String get templateSleepDesc;
+
+  /// No description provided for @templateSleepFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily · 1×'**
+  String get templateSleepFrequency;
+
+  /// No description provided for @templateReadingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading'**
+  String get templateReadingTitle;
+
+  /// No description provided for @templateReadingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Read a few pages every day.'**
+  String get templateReadingDesc;
+
+  /// No description provided for @templateReadingFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily · 1×'**
+  String get templateReadingFrequency;
+
+  /// No description provided for @templateMeditationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mindfulness'**
+  String get templateMeditationTitle;
+
+  /// No description provided for @templateMeditationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'A short breathing or meditation session.'**
+  String get templateMeditationDesc;
+
+  /// No description provided for @templateMeditationFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily · 1×'**
+  String get templateMeditationFrequency;
+
+  /// No description provided for @templateAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit added from template'**
+  String get templateAdded;
+
+  /// No description provided for @templateAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have this habit.'**
+  String get templateAlreadyExists;
 }
 
 class _AppLocalizationsDelegate

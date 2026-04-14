@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
 import 'package:habitpal_frontend/core/theme/app_colors.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/calendar_heatmap.dart';
 import 'package:habitpal_frontend/features/statistics/domain/stats_provider.dart';
@@ -23,9 +25,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     final stats = ref.watch(statsProvider);
+    final l10n = AppLocalizations.of(context)!;
+
+    ref.listen(habitsProvider, (_, __) {
+      Future.microtask(() => ref.read(statsProvider.notifier).loadStats());
+    });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Statistics')),
+      appBar: AppBar(title: Text(l10n.statistics)),
       body:
           stats.isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -41,18 +48,28 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Activity',
+                              l10n.activity,
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 12),
-                            CalendarHeatmap(
-                              completedDates:
-                                  ref
-                                      .watch(habitsProvider)
-                                      .habits
-                                      .expand((h) => h.completions)
-                                      .map((c) => c.completedAt)
-                                      .toList(),
+                            Builder(
+                              builder: (context) {
+                                final habits = ref.watch(habitsProvider).habits;
+                                final active =
+                                    habits.where((h) => !h.isArchived).toList();
+                                final byDay = _completionCountsByDay(active);
+                                return CalendarHeatmap(
+                                  completedDates:
+                                      habits
+                                          .expand((h) => h.completions)
+                                          .map((c) => c.completedAt)
+                                          .toList(),
+                                  activeHabitCount:
+                                      active.isEmpty ? null : active.length,
+                                  completionCountByDay:
+                                      active.isEmpty ? null : byDay,
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -70,34 +87,34 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                       children: [
                         _StatGridCard(
                           icon: Icons.checklist,
-                          title: 'Total Habits',
+                          title: l10n.totalHabits,
                           value: '${stats.totalHabits}',
                         ),
                         _StatGridCard(
                           icon: Icons.local_fire_department,
                           iconColor: AppColors.streak,
-                          title: 'Best Streak',
+                          title: l10n.bestStreak,
                           value: '${stats.bestStreak}',
                         ),
                         _StatGridCard(
                           icon: Icons.trending_up,
-                          title: 'Avg Streak',
+                          title: l10n.averageStreak,
                           value: '${stats.averageStreak}',
                         ),
                         _StatGridCard(
                           icon: Icons.percent,
-                          title: 'Completion Rate',
+                          title: l10n.completionRate,
                           value:
                               '${(stats.overallCompletionRate * 100).toStringAsFixed(1)}%',
                         ),
                         _StatGridCard(
                           icon: Icons.check_circle,
-                          title: 'Total Completions',
+                          title: l10n.statTotalCompletions,
                           value: '${stats.totalCompletions}',
                         ),
                         _StatGridCard(
                           icon: Icons.calendar_today,
-                          title: 'Active Days',
+                          title: l10n.statActiveDays,
                           value: '${stats.activeDays}',
                         ),
                       ],
@@ -117,26 +134,38 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
               context.go('/profile');
           }
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.check_circle_outline),
-            selectedIcon: Icon(Icons.check_circle),
-            label: 'Habits',
+            icon: const Icon(Icons.check_circle_outline),
+            selectedIcon: const Icon(Icons.check_circle),
+            label: l10n.habits,
           ),
           NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'Statistics',
+            icon: const Icon(Icons.bar_chart_outlined),
+            selectedIcon: const Icon(Icons.bar_chart),
+            label: l10n.statistics,
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: l10n.profile,
           ),
         ],
       ),
     );
   }
+}
+
+/// Local calendar day -> number of habit completions on that day (active habits only).
+Map<DateTime, int> _completionCountsByDay(List<HabitModel> activeHabits) {
+  final map = <DateTime, int>{};
+  for (final h in activeHabits) {
+    for (final c in h.completions) {
+      final d = DateUtils.dateOnly(c.completedAt.toLocal());
+      map[d] = (map[d] ?? 0) + 1;
+    }
+  }
+  return map;
 }
 
 class _StatGridCard extends StatelessWidget {

@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:habitpal_frontend/core/theme/app_colors.dart';
+import 'package:intl/intl.dart';
 
+/// GitHub-style activity grid.
+///
+/// **Single-habit / binary:** pass [completedDates] only. Past days without a
+/// completion use [heatmapMissed]; completed days use green.
+///
+/// **Multi-habit (statistics):** pass [activeHabitCount] and [completionCountByDay]
+/// (local calendar date -> number of habits completed that day). Colors: all done
+/// green, partial yellow, none red, future grey.
 class CalendarHeatmap extends StatelessWidget {
   final List<DateTime> completedDates;
   final int weeksToShow;
+
+  /// When set with [completionCountByDay], enables green / yellow / red scale.
+  final int? activeHabitCount;
+  final Map<DateTime, int>? completionCountByDay;
 
   const CalendarHeatmap({
     super.key,
     this.completedDates = const [],
     this.weeksToShow = 16,
+    this.activeHabitCount,
+    this.completionCountByDay,
   });
 
   static const double _dayLabelWidth = 18.0;
@@ -16,20 +31,25 @@ class CalendarHeatmap extends StatelessWidget {
   static const double _monthLabelHeight = 14.0;
   static const double _monthLabelSpacing = 4.0;
 
+  bool get _multiMode =>
+      activeHabitCount != null &&
+      activeHabitCount! > 0 &&
+      completionCountByDay != null;
+
   @override
   Widget build(BuildContext context) {
+    final localeName = Localizations.localeOf(context).toString();
+    final dateTooltipFmt = DateFormat.yMd(localeName);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final today = DateUtils.dateOnly(DateTime.now());
     final totalDays = weeksToShow * 7;
     final startDate = today.subtract(Duration(days: totalDays - 1));
 
-    // Normalize completed dates to date-only for lookup
     final completedSet = <DateTime>{};
     for (final d in completedDates) {
-      completedSet.add(DateUtils.dateOnly(d));
+      completedSet.add(DateUtils.dateOnly(d.toLocal()));
     }
 
-    // Align start to Monday
     final adjustedStart = startDate.subtract(
       Duration(days: (startDate.weekday - 1) % 7),
     );
@@ -53,23 +73,20 @@ class CalendarHeatmap extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Month labels row
               _buildMonthLabels(
                 context,
+                localeName,
                 adjustedStart,
                 today,
                 actualWeeks,
                 cellSize,
               ),
               SizedBox(height: _monthLabelSpacing),
-              // Grid area
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Day-of-week labels
                   _buildDayLabels(context, cellSize),
                   SizedBox(width: _cellGap),
-                  // Heatmap grid: 7 rows, each with N cells
                   Expanded(
                     child: Column(
                       children: List.generate(7, (dayOfWeek) {
@@ -82,41 +99,56 @@ class CalendarHeatmap extends StatelessWidget {
                               final date = adjustedStart.add(
                                 Duration(days: weekIndex * 7 + dayOfWeek),
                               );
-                              final isAfterToday = date.isAfter(today);
-                              final isCompleted =
-                                  !isAfterToday && completedSet.contains(date);
+                              final dateOnly = DateUtils.dateOnly(date);
+                              final isAfterToday = dateOnly.isAfter(today);
+                              final isFuture = isAfterToday;
+
+                              final Color cellColor;
+                              final bool isCompletedFlag;
+                              if (isFuture) {
+                                cellColor =
+                                    isDark
+                                        ? AppColors.heatmapFuture
+                                        : AppColors.heatmapEmpty;
+                                isCompletedFlag = false;
+                              } else if (_multiMode) {
+                                final n =
+                                    completionCountByDay![dateOnly] ?? 0;
+                                final total = activeHabitCount!;
+                                if (n <= 0) {
+                                  cellColor = AppColors.heatmapMissed;
+                                } else if (n >= total) {
+                                  cellColor = AppColors.heatmapLevel3;
+                                } else {
+                                  cellColor = AppColors.heatmapPartial;
+                                }
+                                isCompletedFlag = n > 0;
+                              } else {
+                                isCompletedFlag =
+                                    !isFuture && completedSet.contains(dateOnly);
+                                cellColor =
+                                    isCompletedFlag
+                                        ? AppColors.heatmapLevel3
+                                        : AppColors.heatmapMissed;
+                              }
 
                               return Padding(
                                 padding: EdgeInsets.only(
                                   left: weekIndex > 0 ? _cellGap : 0,
                                 ),
-                                child:
-                                    isAfterToday
-                                        ? SizedBox(
-                                          width: cellSize,
-                                          height: cellSize,
-                                        )
-                                        : Tooltip(
-                                          message:
-                                              '${date.day}/${date.month}/${date.year}'
-                                              '${isCompleted ? ' \u2713' : ''}',
-                                          child: Container(
-                                            width: cellSize,
-                                            height: cellSize,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  isCompleted
-                                                      ? AppColors.heatmapLevel3
-                                                      : (isDark
-                                                          ? AppColors
-                                                              .heatmapEmptyDark
-                                                          : AppColors
-                                                              .heatmapEmpty),
-                                              borderRadius:
-                                                  BorderRadius.circular(2),
-                                            ),
-                                          ),
-                                        ),
+                                child: Tooltip(
+                                  message:
+                                      '${dateTooltipFmt.format(dateOnly)}'
+                                      '${isCompletedFlag ? ' \u2713' : ''}',
+                                  child: Container(
+                                    width: cellSize,
+                                    height: cellSize,
+                                    decoration: BoxDecoration(
+                                      color: cellColor,
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  ),
+                                ),
                               );
                             }),
                           ),
@@ -134,7 +166,7 @@ class CalendarHeatmap extends StatelessWidget {
   }
 
   Widget _buildDayLabels(BuildContext context, double cellSize) {
-    final dayLabels = ['M', '', 'W', '', 'F', '', ''];
+    final narrows = MaterialLocalizations.of(context).narrowWeekdays;
     final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
       fontSize: 9,
       color: Theme.of(context).colorScheme.onSurface.withAlpha(128),
@@ -144,13 +176,17 @@ class CalendarHeatmap extends StatelessWidget {
       width: _dayLabelWidth,
       child: Column(
         children: List.generate(7, (i) {
+          final weekday = i + 1;
+          final idx = weekday % 7;
+          final label =
+              (i == 0 || i == 2 || i == 4) ? narrows[idx] : '';
           return Padding(
             padding: EdgeInsets.only(top: i > 0 ? _cellGap : 0),
             child: SizedBox(
               height: cellSize,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(dayLabels[i], style: labelStyle),
+                child: Text(label, style: labelStyle),
               ),
             ),
           );
@@ -161,32 +197,19 @@ class CalendarHeatmap extends StatelessWidget {
 
   Widget _buildMonthLabels(
     BuildContext context,
+    String localeName,
     DateTime start,
     DateTime today,
     int actualWeeks,
     double cellSize,
   ) {
-    final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
+    final monthFmt = DateFormat.MMM(localeName);
 
     final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
       fontSize: 9,
       color: Theme.of(context).colorScheme.onSurface.withAlpha(128),
     );
 
-    // Build positioned month labels
     final labels = <Widget>[];
     final seenMonths = <int>{};
 
@@ -199,7 +222,7 @@ class CalendarHeatmap extends StatelessWidget {
           Positioned(
             left: left,
             top: 0,
-            child: Text(months[weekStart.month - 1], style: labelStyle),
+            child: Text(monthFmt.format(weekStart), style: labelStyle),
           ),
         );
       }

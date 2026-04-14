@@ -81,6 +81,11 @@ func (m *MockHabitRepository) CountByUserID(ctx context.Context, userID string) 
 	return args.Int(0), args.Error(1)
 }
 
+func (m *MockHabitRepository) ExistsActiveByTemplateKey(ctx context.Context, userID, templateKey string) (bool, error) {
+	args := m.Called(ctx, userID, templateKey)
+	return args.Bool(0), args.Error(1)
+}
+
 // MockCompletionRepository is a mock implementation of repository.CompletionRepository.
 type MockCompletionRepository struct {
 	mock.Mock

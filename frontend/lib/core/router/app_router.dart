@@ -5,32 +5,39 @@ import 'package:habitpal_frontend/features/auth/domain/auth_provider.dart';
 import 'package:habitpal_frontend/features/auth/presentation/login_screen.dart';
 import 'package:habitpal_frontend/features/auth/presentation/register_screen.dart';
 import 'package:habitpal_frontend/features/habits/presentation/habit_detail_screen.dart';
+import 'package:habitpal_frontend/features/habits/presentation/habit_templates_screen.dart';
 import 'package:habitpal_frontend/features/habits/presentation/habits_screen.dart';
+import 'package:habitpal_frontend/features/onboarding/domain/onboarding_provider.dart';
+import 'package:habitpal_frontend/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:habitpal_frontend/features/profile/presentation/profile_screen.dart';
 import 'package:habitpal_frontend/features/statistics/presentation/statistics_screen.dart';
 
-/// A [ChangeNotifier] that listens to auth state changes and triggers
-/// GoRouter's redirect evaluation.
-class AuthChangeNotifier extends ChangeNotifier {
-  AuthChangeNotifier(Ref ref) {
+/// Notifies [GoRouter] when auth or onboarding resolution changes.
+class RouterRefreshNotifier extends ChangeNotifier {
+  RouterRefreshNotifier(Ref ref) {
     ref.listen<AuthState>(authStateProvider, (_, __) {
+      notifyListeners();
+    });
+    ref.listen<OnboardingFlowState>(onboardingFlowProvider, (_, __) {
       notifyListeners();
     });
   }
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authChangeNotifier = AuthChangeNotifier(ref);
+  final refresh = RouterRefreshNotifier(ref);
 
   return GoRouter(
     initialLocation: '/login',
-    refreshListenable: authChangeNotifier,
+    refreshListenable: refresh,
     redirect: (BuildContext context, GoRouterState state) {
       final authState = ref.read(authStateProvider);
+      final ob = ref.read(onboardingFlowProvider);
       final isAuthenticated = authState.status == AuthStatus.authenticated;
       final isOnLogin = state.matchedLocation == '/login';
       final isOnRegister = state.matchedLocation == '/register';
       final isOnAuthPage = isOnLogin || isOnRegister;
+      final isOnboarding = state.matchedLocation == '/onboarding';
 
       // Still checking stored token — don't redirect yet
       if (authState.status == AuthStatus.initial) {
@@ -42,8 +49,25 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return '/login';
       }
 
-      // Authenticated but on an auth page — redirect to habits
+      // Authenticated on login/register: wait for onboarding flag, then route
       if (isAuthenticated && isOnAuthPage) {
+        if (ob.loading) {
+          return null;
+        }
+        if (ob.needsOnboarding) {
+          return '/onboarding';
+        }
+        return '/habits';
+      }
+
+      if (isAuthenticated &&
+          !ob.loading &&
+          ob.needsOnboarding &&
+          !isOnboarding) {
+        return '/onboarding';
+      }
+
+      if (isAuthenticated && !ob.needsOnboarding && isOnboarding) {
         return '/habits';
       }
 
@@ -67,6 +91,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             (context, state) => CustomTransitionPage(
               key: state.pageKey,
               child: const RegisterScreen(),
+              transitionsBuilder: _fadeTransition,
+            ),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        name: 'onboarding',
+        pageBuilder:
+            (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const OnboardingScreen(),
+              transitionsBuilder: _fadeTransition,
+            ),
+      ),
+      GoRoute(
+        path: '/templates',
+        name: 'templates',
+        pageBuilder:
+            (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const HabitTemplatesScreen(),
               transitionsBuilder: _fadeTransition,
             ),
       ),

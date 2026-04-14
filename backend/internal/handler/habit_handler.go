@@ -52,6 +52,10 @@ func (h *HabitHandler) HandleCreate(c *gin.Context) {
 
 	habit, err := h.HabitService.CreateHabit(c.Request.Context(), userID, req)
 	if err != nil {
+		if errors.Is(err, service.ErrTemplateHabitAlreadyExists) {
+			c.JSON(http.StatusConflict, gin.H{"error": "template_habit_already_exists"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create habit"})
 		return
 	}

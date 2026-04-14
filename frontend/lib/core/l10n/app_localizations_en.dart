@@ -238,4 +238,174 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterActive => 'Active';
+
+  @override
+  String get filterDoneToday => 'Done today';
+
+  @override
+  String habitsProgressToday(int completed, int total) {
+    return '$completed of $total habits completed today';
+  }
+
+  @override
+  String get progressMessageStart => 'Let\'s get started!';
+
+  @override
+  String get progressMessageKeep => 'Keep going!';
+
+  @override
+  String get progressMessageAlmost => 'Almost there!';
+
+  @override
+  String get progressMessageDone => 'All done! Great job!';
+
+  @override
+  String get statTotalCompletions => 'Total Completions';
+
+  @override
+  String get statActiveDays => 'Active Days';
+
+  @override
+  String get onboardingTitle => 'Welcome';
+
+  @override
+  String get onboardingWelcomeTitle => 'Welcome to HabitPal';
+
+  @override
+  String get onboardingWelcomeSubtitle =>
+      'A few quick steps to tailor reminders and starter habits to you.';
+
+  @override
+  String get onboardingGoalTitle => 'What is your main focus?';
+
+  @override
+  String get onboardingGoalSubtitle =>
+      'We will use this to personalize your experience.';
+
+  @override
+  String get onboardingGoalHealth => 'Health & energy';
+
+  @override
+  String get onboardingGoalProductivity => 'Productivity & focus';
+
+  @override
+  String get onboardingGoalCalm => 'Calm & mindfulness';
+
+  @override
+  String get onboardingGoalBalance => 'Balance & habits';
+
+  @override
+  String get onboardingReminderTitle => 'When should we remind you?';
+
+  @override
+  String get onboardingReminderSubtitle =>
+      'You can change this later in settings.';
+
+  @override
+  String get onboardingReminderMorning => 'Morning';
+
+  @override
+  String get onboardingReminderAfternoon => 'Afternoon';
+
+  @override
+  String get onboardingReminderEvening => 'Evening';
+
+  @override
+  String get onboardingReminderAnytime => 'Any time';
+
+  @override
+  String get onboardingHabitsTitle => 'Pick starter habits';
+
+  @override
+  String get onboardingHabitsSubtitle =>
+      'Choose one or two templates to begin with.';
+
+  @override
+  String get onboardingSelectUpToTwo => 'Select up to 2';
+
+  @override
+  String get onboardingBack => 'Back';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingPickAtLeastOne => 'Please pick at least one habit.';
+
+  @override
+  String get onboardingSelectGoal => 'Please choose a goal.';
+
+  @override
+  String get onboardingSelectReminder => 'Please choose a reminder time.';
+
+  @override
+  String get habitTemplatesTitle => 'Habit templates';
+
+  @override
+  String get habitTemplatesSubtitle =>
+      'Add a ready-made habit with a suggested schedule.';
+
+  @override
+  String get templateSportTitle => 'Movement';
+
+  @override
+  String get templateSportDesc => 'Short workout, walk, or stretch.';
+
+  @override
+  String get templateSportFrequency => 'Daily · 1×';
+
+  @override
+  String get templateWaterTitle => 'Hydration';
+
+  @override
+  String get templateWaterDesc => 'Drink enough water during the day.';
+
+  @override
+  String get templateWaterFrequency => 'Daily · 8 glasses';
+
+  @override
+  String get templateSleepTitle => 'Sleep routine';
+
+  @override
+  String get templateSleepDesc => 'Wind down and keep a consistent bedtime.';
+
+  @override
+  String get templateSleepFrequency => 'Daily · 1×';
+
+  @override
+  String get templateReadingTitle => 'Reading';
+
+  @override
+  String get templateReadingDesc => 'Read a few pages every day.';
+
+  @override
+  String get templateReadingFrequency => 'Daily · 1×';
+
+  @override
+  String get templateMeditationTitle => 'Mindfulness';
+
+  @override
+  String get templateMeditationDesc =>
+      'A short breathing or meditation session.';
+
+  @override
+  String get templateMeditationFrequency => 'Daily · 1×';
+
+  @override
+  String get templateAdded => 'Habit added from template';
+
+  @override
+  String get templateAlreadyExists => 'You already have this habit.';
 }

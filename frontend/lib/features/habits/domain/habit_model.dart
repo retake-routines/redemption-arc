@@ -56,11 +56,15 @@ class HabitModel {
   final String color;
   final String frequency;
   final int targetCount;
+  /// Stable id when the habit was created from a template (sport, water, …).
+  final String templateKey;
   final bool isArchived;
   final DateTime createdAt;
   final DateTime updatedAt;
   final StreakModel streak;
   final List<CompletionModel> completions;
+  /// Daily: completed on the current calendar day. Weekly: current local week
+  /// has at least [targetCount] completions (used by list, banner, filters).
   final bool completedToday;
 
   HabitModel({
@@ -73,6 +77,7 @@ class HabitModel {
     this.color = '',
     this.frequency = 'daily',
     this.targetCount = 1,
+    this.templateKey = '',
     this.isArchived = false,
     DateTime? updatedAt,
     this.streak = const StreakModel(),
@@ -90,6 +95,7 @@ class HabitModel {
       color: json['color'] as String? ?? '',
       frequency: json['frequency_type'] as String? ?? 'daily',
       targetCount: json['frequency_value'] as int? ?? 1,
+      templateKey: json['template_key'] as String? ?? '',
       isArchived: json['is_archived'] as bool? ?? false,
       createdAt:
           json['created_at'] != null
@@ -111,6 +117,7 @@ class HabitModel {
                   )
                   .toList()
               : const [],
+      completedToday: json['completed_today'] as bool? ?? false,
     );
   }
 
@@ -122,6 +129,7 @@ class HabitModel {
       'color': color,
       'frequency_type': frequency,
       'frequency_value': targetCount,
+      if (templateKey.isNotEmpty) 'template_key': templateKey,
       'is_archived': isArchived,
     };
   }
@@ -135,6 +143,7 @@ class HabitModel {
     String? color,
     String? frequency,
     int? targetCount,
+    String? templateKey,
     bool? isArchived,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -151,6 +160,7 @@ class HabitModel {
       color: color ?? this.color,
       frequency: frequency ?? this.frequency,
       targetCount: targetCount ?? this.targetCount,
+      templateKey: templateKey ?? this.templateKey,
       isArchived: isArchived ?? this.isArchived,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -245,6 +255,7 @@ class CreateHabitRequest {
   final String color;
   final String frequencyType;
   final int frequencyValue;
+  final String templateKey;
 
   const CreateHabitRequest({
     required this.title,
@@ -253,6 +264,7 @@ class CreateHabitRequest {
     this.color = '',
     this.frequencyType = 'daily',
     this.frequencyValue = 1,
+    this.templateKey = '',
   });
 
   Map<String, dynamic> toJson() {
@@ -263,6 +275,7 @@ class CreateHabitRequest {
       'color': color,
       'frequency_type': frequencyType,
       'frequency_value': frequencyValue,
+      if (templateKey.isNotEmpty) 'template_key': templateKey,
     };
   }
 }
@@ -276,6 +289,8 @@ class UpdateHabitRequest {
   final String? frequencyType;
   final int? frequencyValue;
   final bool? isArchived;
+  /// When true, clears [template_key] on the server (habit becomes a custom one for display).
+  final bool clearTemplateKey;
 
   const UpdateHabitRequest({
     this.title,
@@ -285,6 +300,7 @@ class UpdateHabitRequest {
     this.frequencyType,
     this.frequencyValue,
     this.isArchived,
+    this.clearTemplateKey = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -296,6 +312,7 @@ class UpdateHabitRequest {
     if (frequencyType != null) map['frequency_type'] = frequencyType;
     if (frequencyValue != null) map['frequency_value'] = frequencyValue;
     if (isArchived != null) map['is_archived'] = isArchived;
+    if (clearTemplateKey) map['template_key'] = '';
     return map;
   }
 }

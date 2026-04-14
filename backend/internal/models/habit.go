@@ -28,6 +28,7 @@ type Habit struct {
 	Color          string    `json:"color" db:"color"`
 	FrequencyType  string    `json:"frequency_type" db:"frequency_type"`
 	FrequencyValue int       `json:"frequency_value" db:"frequency_value"`
+	TemplateKey    string    `json:"template_key,omitempty" db:"template_key"`
 	IsArchived     bool      `json:"is_archived" db:"is_archived"`
 	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at" db:"updated_at"`
@@ -41,6 +42,7 @@ type HabitCreateRequest struct {
 	Color          string `json:"color"`
 	FrequencyType  string `json:"frequency_type" binding:"required"`
 	FrequencyValue int    `json:"frequency_value" binding:"required"`
+	TemplateKey    string `json:"template_key"`
 }
 
 // Validate checks that the create request fields are valid.
@@ -57,6 +59,9 @@ func (r *HabitCreateRequest) Validate() error {
 	if r.FrequencyValue < 1 {
 		return errors.New("frequency_value must be at least 1")
 	}
+	if len(r.TemplateKey) > 64 {
+		return errors.New("template_key must be at most 64 characters")
+	}
 	return nil
 }
 
@@ -68,6 +73,7 @@ type HabitUpdateRequest struct {
 	Color          *string `json:"color"`
 	FrequencyType  *string `json:"frequency_type"`
 	FrequencyValue *int    `json:"frequency_value"`
+	TemplateKey    *string `json:"template_key"`
 	IsArchived     *bool   `json:"is_archived"`
 }
 
@@ -84,6 +90,9 @@ func (r *HabitUpdateRequest) Validate() error {
 	}
 	if r.FrequencyValue != nil && *r.FrequencyValue < 1 {
 		return errors.New("frequency_value must be at least 1")
+	}
+	if r.TemplateKey != nil && len(*r.TemplateKey) > 64 {
+		return errors.New("template_key must be at most 64 characters")
 	}
 	return nil
 }

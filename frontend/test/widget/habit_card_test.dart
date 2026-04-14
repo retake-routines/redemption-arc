@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/habit_card.dart';
 
@@ -10,6 +12,13 @@ void main() {
     VoidCallback? onComplete,
   }) {
     return MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'),
       home: Scaffold(
         body: HabitCard(habit: habit, onTap: onTap, onComplete: onComplete),
       ),

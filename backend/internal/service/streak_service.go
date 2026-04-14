@@ -62,29 +62,46 @@ func (s *StreakService) GetUserStreaks(ctx context.Context, userID string) ([]mo
 }
 
 // RecordCompletion creates a completion record for a habit and verifies ownership.
+// Weekly habits: one action fills the current calendar week (Mon–Sun) with one
+// completion per day when possible; existing days are skipped (no error).
 func (s *StreakService) RecordCompletion(ctx context.Context, userID string, req models.CompletionCreateRequest) (*models.HabitCompletion, error) {
-	// Verify the habit exists and belongs to the user (if HabitRepo is set)
-	if s.HabitRepo != nil {
-		habit, err := s.HabitRepo.GetByID(ctx, req.HabitID)
-		if err != nil {
-			if errors.Is(err, repository.ErrHabitNotFound) {
-				return nil, ErrHabitNotFound
-			}
-			return nil, fmt.Errorf("getting habit for completion: %w", err)
+	if s.HabitRepo == nil {
+		completion := &models.HabitCompletion{
+			HabitID: req.HabitID,
+			UserID:  userID,
+			Note:    req.Note,
 		}
-		if habit.UserID != userID {
+		err := s.CompletionRepo.Create(ctx, completion)
+		if err != nil {
+			if errors.Is(err, repository.ErrDuplicateCompletion) {
+				return nil, repository.ErrDuplicateCompletion
+			}
+			return nil, fmt.Errorf("creating completion: %w", err)
+		}
+		return completion, nil
+	}
+
+	habit, err := s.HabitRepo.GetByID(ctx, req.HabitID)
+	if err != nil {
+		if errors.Is(err, repository.ErrHabitNotFound) {
 			return nil, ErrHabitNotFound
 		}
+		return nil, fmt.Errorf("getting habit for completion: %w", err)
+	}
+	if habit.UserID != userID {
+		return nil, ErrHabitNotFound
+	}
+
+	if habit.FrequencyType == string(models.FrequencyWeekly) {
+		return s.recordWeeklyWeekCompletions(ctx, userID, req)
 	}
 
 	completion := &models.HabitCompletion{
-		HabitID:     req.HabitID,
-		UserID:      userID,
-		CompletedAt: time.Now(),
-		Note:        req.Note,
+		HabitID: req.HabitID,
+		UserID:  userID,
+		Note:    req.Note,
 	}
-
-	err := s.CompletionRepo.Create(ctx, completion)
+	err = s.CompletionRepo.Create(ctx, completion)
 	if err != nil {
 		if errors.Is(err, repository.ErrDuplicateCompletion) {
 			return nil, repository.ErrDuplicateCompletion
@@ -93,6 +110,73 @@ func (s *StreakService) RecordCompletion(ctx context.Context, userID string, req
 	}
 
 	return completion, nil
+}
+
+func startOfWeekMonday(t time.Time) time.Time {
+	loc := t.Location()
+	d := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, loc)
+	daysFromMonday := (int(d.Weekday()) + 6) % 7
+	return d.AddDate(0, 0, -daysFromMonday)
+}
+
+func noonOn(d time.Time) time.Time {
+	return time.Date(d.Year(), d.Month(), d.Day(), 12, 0, 0, 0, d.Location())
+}
+
+func sameCalendarDay(a, b time.Time) bool {
+	loc := b.Location()
+	ay, am, ad := a.In(loc).Date()
+	by, bm, bd := b.In(loc).Date()
+	return ay == by && am == bm && ad == bd
+}
+
+func (s *StreakService) recordWeeklyWeekCompletions(ctx context.Context, userID string, req models.CompletionCreateRequest) (*models.HabitCompletion, error) {
+	now := time.Now()
+	weekStart := startOfWeekMonday(now)
+	weekEnd := weekStart.AddDate(0, 0, 7)
+
+	var last *models.HabitCompletion
+	for i := 0; i < 7; i++ {
+		day := weekStart.AddDate(0, 0, i)
+		at := noonOn(day)
+		c := &models.HabitCompletion{
+			HabitID:     req.HabitID,
+			UserID:      userID,
+			CompletedAt: at,
+			Note:        req.Note,
+		}
+		err := s.CompletionRepo.Create(ctx, c)
+		if err != nil {
+			if errors.Is(err, repository.ErrDuplicateCompletion) {
+				continue
+			}
+			return nil, fmt.Errorf("creating weekly completion: %w", err)
+		}
+		last = c
+	}
+	if last != nil {
+		return last, nil
+	}
+
+	comps, err := s.CompletionRepo.GetByHabitID(ctx, req.HabitID)
+	if err != nil {
+		return nil, fmt.Errorf("listing completions: %w", err)
+	}
+	for i := range comps {
+		t := comps[i].CompletedAt
+		if !t.Before(weekStart) && t.Before(weekEnd) && sameCalendarDay(t, now) {
+			out := comps[i]
+			return &out, nil
+		}
+	}
+	for i := range comps {
+		t := comps[i].CompletedAt
+		if !t.Before(weekStart) && t.Before(weekEnd) {
+			out := comps[i]
+			return &out, nil
+		}
+	}
+	return nil, repository.ErrDuplicateCompletion
 }
 
 // RemoveCompletion deletes a completion and verifies ownership.

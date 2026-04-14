@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
 import 'package:habitpal_frontend/features/auth/domain/auth_provider.dart';
 import 'package:habitpal_frontend/features/profile/domain/profile_provider.dart';
 import 'package:habitpal_frontend/shared/widgets/platform_widgets.dart';
@@ -11,9 +12,10 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(title: Text(l10n.profile)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -30,7 +32,7 @@ class ProfileScreen extends ConsumerWidget {
               children: [
                 ListTile(
                   leading: const Icon(Icons.dark_mode),
-                  title: const Text('Dark Mode'),
+                  title: Text(l10n.darkMode),
                   trailing: AdaptiveSwitch(
                     value: profile.isDarkMode,
                     onChanged: (_) {
@@ -41,9 +43,9 @@ class ProfileScreen extends ConsumerWidget {
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.language),
-                  title: const Text('Language'),
+                  title: Text(l10n.language),
                   trailing: Text(
-                    profile.locale == 'en' ? 'English' : 'Russian',
+                    profile.locale == 'en' ? l10n.english : l10n.russian,
                   ),
                   onTap: () {
                     final newLocale = profile.locale == 'en' ? 'ru' : 'en';
@@ -61,15 +63,15 @@ class ProfileScreen extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.error,
               ),
               title: Text(
-                'Logout',
+                l10n.logout,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               onTap: () async {
                 final confirmed = await showAdaptiveConfirmDialog<bool>(
                   context: context,
-                  title: 'Logout',
-                  content: 'Are you sure you want to logout?',
-                  confirmText: 'Logout',
+                  title: l10n.logout,
+                  content: l10n.logoutConfirm,
+                  confirmText: l10n.logout,
                   isDestructive: true,
                 );
                 if (confirmed == true && context.mounted) {
@@ -93,21 +95,21 @@ class ProfileScreen extends ConsumerWidget {
               break;
           }
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.check_circle_outline),
-            selectedIcon: Icon(Icons.check_circle),
-            label: 'Habits',
+            icon: const Icon(Icons.check_circle_outline),
+            selectedIcon: const Icon(Icons.check_circle),
+            label: l10n.habits,
           ),
           NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'Statistics',
+            icon: const Icon(Icons.bar_chart_outlined),
+            selectedIcon: const Icon(Icons.bar_chart),
+            label: l10n.statistics,
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: l10n.profile,
           ),
         ],
       ),

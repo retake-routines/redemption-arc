@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
 import 'package:habitpal_frontend/core/theme/app_colors.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_localized_display.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 import 'package:habitpal_frontend/shared/utils/habit_icons.dart';
 
@@ -17,6 +19,9 @@ class HabitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final title = localizedHabitTitle(habit, l10n);
+    final subtitle = localizedHabitDescription(habit, l10n);
     final isCompleted = habit.completedToday;
     final borderColor = parseHabitColor(
       habit.color,
@@ -112,20 +117,21 @@ class HabitCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            habit.name,
+                            title,
                             style: Theme.of(
                               context,
                             ).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              decoration:
+                              color:
                                   isCompleted
-                                      ? TextDecoration.lineThrough
+                                      ? Theme.of(context).colorScheme.onSurface
+                                          .withAlpha(191)
                                       : null,
                             ),
                           ),
-                          if (habit.description.isNotEmpty)
+                          if (subtitle.isNotEmpty)
                             Text(
-                              habit.description,
+                              subtitle,
                               style: Theme.of(context).textTheme.bodySmall,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_localized_display.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
 
@@ -18,15 +20,24 @@ class _EditHabitDialogState extends ConsumerState<EditHabitDialog> {
   late final TextEditingController _descriptionController;
   late String _frequencyType;
   bool _isSubmitting = false;
+  bool _seededLocalized = false;
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.habit.name);
-    _descriptionController = TextEditingController(
-      text: widget.habit.description,
-    );
+    _titleController = TextEditingController();
+    _descriptionController = TextEditingController();
     _frequencyType = widget.habit.frequency;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_seededLocalized) return;
+    _seededLocalized = true;
+    final l10n = AppLocalizations.of(context)!;
+    _titleController.text = localizedHabitTitle(widget.habit, l10n);
+    _descriptionController.text = localizedHabitDescription(widget.habit, l10n);
   }
 
   @override
@@ -41,10 +52,18 @@ class _EditHabitDialogState extends ConsumerState<EditHabitDialog> {
 
     setState(() => _isSubmitting = true);
 
+    final l10n = AppLocalizations.of(context)!;
+    final locTitle = localizedHabitTitle(widget.habit, l10n);
+    final locDesc = localizedHabitDescription(widget.habit, l10n);
+    final customized =
+        _titleController.text.trim() != locTitle.trim() ||
+        _descriptionController.text.trim() != locDesc.trim();
+
     final request = UpdateHabitRequest(
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim(),
       frequencyType: _frequencyType,
+      clearTemplateKey: customized && widget.habit.templateKey.isNotEmpty,
     );
 
     await ref

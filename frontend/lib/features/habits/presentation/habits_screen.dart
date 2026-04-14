@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
+import 'package:habitpal_frontend/features/habits/presentation/habit_user_messages.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/create_habit_dialog.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/habit_card.dart';
 
-enum _HabitFilter { all, active, archived }
+enum _HabitFilter { all, active, doneToday }
 
 class HabitsScreen extends ConsumerStatefulWidget {
   const HabitsScreen({super.key});
@@ -27,9 +29,11 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
   List<HabitModel> _applyFilter(List<HabitModel> habits) {
     switch (_filter) {
       case _HabitFilter.active:
-        return habits.where((h) => !h.isArchived).toList();
-      case _HabitFilter.archived:
-        return habits.where((h) => h.isArchived).toList();
+        return habits
+            .where((h) => !h.isArchived && !h.completedToday)
+            .toList();
+      case _HabitFilter.doneToday:
+        return habits.where((h) => h.completedToday).toList();
       case _HabitFilter.all:
         return habits;
     }
@@ -39,9 +43,10 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
   Widget build(BuildContext context) {
     ref.listen(habitsProvider.select((s) => s.errorMessage), (prev, next) {
       if (next != null) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next),
+            content: Text(displayHabitErrorUserMessage(next, l10n)),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -49,14 +54,20 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
     });
 
     final habitsState = ref.watch(habitsProvider);
+    final l10n = AppLocalizations.of(context)!;
     final filteredHabits = _applyFilter(habitsState.habits);
     final activeHabits =
         habitsState.habits.where((h) => !h.isArchived).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Habits'),
+        title: Text(l10n.myHabits),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.library_add_check_outlined),
+            tooltip: l10n.habitTemplatesTitle,
+            onPressed: () => context.push('/templates'),
+          ),
           IconButton(
             icon: const Icon(Icons.bar_chart),
             onPressed: () => context.go('/statistics'),
@@ -84,11 +95,11 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'No habits yet',
+                      l10n.noHabits,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 8),
-                    const Text('Tap + to create your first habit'),
+                    Text(l10n.noHabitsSubtitle),
                   ],
                 ),
               )
@@ -98,11 +109,15 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
                   padding: const EdgeInsets.all(16),
                   children: [
                     // Today's progress banner
-                    _TodayProgressBanner(activeHabits: activeHabits),
+                    _TodayProgressBanner(
+                      activeHabits: activeHabits,
+                      l10n: l10n,
+                    ),
                     const SizedBox(height: 12),
                     // Filter chips
                     _FilterChipRow(
                       currentFilter: _filter,
+                      l10n: l10n,
                       onFilterChanged: (f) => setState(() => _filter = f),
                     ),
                     const SizedBox(height: 12),
@@ -113,11 +128,15 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
                         index: index,
                         child: HabitCard(
                           habit: habit,
-                          onTap: () => context.go('/habits/${habit.id}'),
-                          onComplete:
-                              () => ref
-                                  .read(habitsProvider.notifier)
-                                  .completeHabit(habit.id),
+                          onTap: () => context.push('/habits/${habit.id}'),
+                          onComplete: () async {
+                            final n = ref.read(habitsProvider.notifier);
+                            if (habit.completedToday) {
+                              await n.undoTodayCompletion(habit.id);
+                            } else {
+                              await n.completeHabit(habit.id);
+                            }
+                          },
                         ),
                       );
                     }),
@@ -148,21 +167,21 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
               context.go('/profile');
           }
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.check_circle_outline),
-            selectedIcon: Icon(Icons.check_circle),
-            label: 'Habits',
+            icon: const Icon(Icons.check_circle_outline),
+            selectedIcon: const Icon(Icons.check_circle),
+            label: l10n.habits,
           ),
           NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'Statistics',
+            icon: const Icon(Icons.bar_chart_outlined),
+            selectedIcon: const Icon(Icons.bar_chart),
+            label: l10n.statistics,
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: l10n.profile,
           ),
         ],
       ),
@@ -173,8 +192,12 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
 /// Today's progress banner showing completion ratio and motivational message.
 class _TodayProgressBanner extends StatelessWidget {
   final List<HabitModel> activeHabits;
+  final AppLocalizations l10n;
 
-  const _TodayProgressBanner({required this.activeHabits});
+  const _TodayProgressBanner({
+    required this.activeHabits,
+    required this.l10n,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -183,15 +206,15 @@ class _TodayProgressBanner extends StatelessWidget {
     final completedCount = activeHabits.where((h) => h.completedToday).length;
     final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
 
-    String message;
+    final String message;
     if (progress == 0) {
-      message = "Let's get started!";
+      message = l10n.progressMessageStart;
     } else if (progress < 0.5) {
-      message = 'Keep going!';
+      message = l10n.progressMessageKeep;
     } else if (progress < 1.0) {
-      message = 'Almost there!';
+      message = l10n.progressMessageAlmost;
     } else {
-      message = 'All done! Great job!';
+      message = l10n.progressMessageDone;
     }
 
     return Card(
@@ -210,7 +233,7 @@ class _TodayProgressBanner extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '$completedCount of $totalCount habits completed today',
+                  l10n.habitsProgressToday(completedCount, totalCount),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -242,13 +265,15 @@ class _TodayProgressBanner extends StatelessWidget {
   }
 }
 
-/// A row of filter chips for All / Active / Archived.
+/// A row of filter chips: all habits / not done today / done today.
 class _FilterChipRow extends StatelessWidget {
   final _HabitFilter currentFilter;
+  final AppLocalizations l10n;
   final ValueChanged<_HabitFilter> onFilterChanged;
 
   const _FilterChipRow({
     required this.currentFilter,
+    required this.l10n,
     required this.onFilterChanged,
   });
 
@@ -258,9 +283,9 @@ class _FilterChipRow extends StatelessWidget {
       children:
           _HabitFilter.values.map((filter) {
             final label = switch (filter) {
-              _HabitFilter.all => 'All',
-              _HabitFilter.active => 'Active',
-              _HabitFilter.archived => 'Archived',
+              _HabitFilter.all => l10n.filterAll,
+              _HabitFilter.active => l10n.filterActive,
+              _HabitFilter.doneToday => l10n.filterDoneToday,
             };
             return Padding(
               padding: const EdgeInsets.only(right: 8),

@@ -52,6 +52,12 @@ abstract class AppColors {
   static const Color heatmapLevel2 = Color(0xFF81C784);
   static const Color heatmapLevel3 = Color(0xFF4CAF50);
   static const Color heatmapLevel4 = Color(0xFF2E7D32);
+  /// Partial completion (multi-habit day).
+  static const Color heatmapPartial = Color(0xFFF9A825);
+  /// No completions on a past day (multi-habit) or missed day (single-habit).
+  static const Color heatmapMissed = Color(0xFFC62828);
+  /// Days not yet reached (future).
+  static const Color heatmapFuture = Color(0xFF424242);
 
   // ---- Misc ----
   static const Color dividerLight = Color(0xFFE0E0E0);

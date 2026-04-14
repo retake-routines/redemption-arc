@@ -247,3 +247,55 @@ func TestDeleteHabit_NotFound(t *testing.T) {
 	assert.ErrorIs(t, err, ErrHabitNotFound)
 	mockRepo.AssertExpectations(t)
 }
+
+func TestCreateHabit_TemplateKeyDuplicate(t *testing.T) {
+	mockRepo := new(mocks.MockHabitRepository)
+	svc := newTestHabitService(mockRepo)
+
+	req := models.HabitCreateRequest{
+		Title:          "Sport",
+		FrequencyType:  "daily",
+		FrequencyValue: 1,
+		TemplateKey:    "sport",
+	}
+
+	mockRepo.On("ExistsActiveByTemplateKey", mock.Anything, "user-1", "sport").
+		Return(true, nil)
+
+	habit, err := svc.CreateHabit(context.Background(), "user-1", req)
+
+	assert.ErrorIs(t, err, ErrTemplateHabitAlreadyExists)
+	assert.Nil(t, habit)
+	mockRepo.AssertNotCalled(t, "Create")
+	mockRepo.AssertExpectations(t)
+}
+
+func TestCreateHabit_WithTemplateKey_Success(t *testing.T) {
+	mockRepo := new(mocks.MockHabitRepository)
+	svc := newTestHabitService(mockRepo)
+
+	req := models.HabitCreateRequest{
+		Title:          "Sport",
+		FrequencyType:  "daily",
+		FrequencyValue: 1,
+		TemplateKey:    "sport",
+	}
+
+	mockRepo.On("ExistsActiveByTemplateKey", mock.Anything, "user-1", "sport").
+		Return(false, nil)
+	mockRepo.On("Create", mock.Anything, mock.AnythingOfType("*models.Habit")).
+		Run(func(args mock.Arguments) {
+			h := args.Get(1).(*models.Habit)
+			h.ID = "habit-new"
+			h.CreatedAt = time.Now()
+			h.UpdatedAt = time.Now()
+		}).
+		Return(nil)
+
+	habit, err := svc.CreateHabit(context.Background(), "user-1", req)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, habit)
+	assert.Equal(t, "sport", habit.TemplateKey)
+	mockRepo.AssertExpectations(t)
+}

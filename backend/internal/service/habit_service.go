@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"habitpal-backend/internal/models"
 	"habitpal-backend/internal/repository"
@@ -14,6 +15,9 @@ var ErrHabitNotFound = errors.New("habit not found")
 
 // ErrForbidden is returned when a user tries to access a habit they don't own.
 var ErrForbidden = errors.New("you do not have access to this habit")
+
+// ErrTemplateHabitAlreadyExists is returned when creating a second active habit for the same template_key.
+var ErrTemplateHabitAlreadyExists = errors.New("template habit already exists")
 
 // HabitService handles habit business logic.
 type HabitService struct {
@@ -31,6 +35,17 @@ func (s *HabitService) CreateHabit(ctx context.Context, userID string, req model
 		return nil, fmt.Errorf("validation: %w", err)
 	}
 
+	templateKey := strings.TrimSpace(req.TemplateKey)
+	if templateKey != "" {
+		exists, err := s.HabitRepo.ExistsActiveByTemplateKey(ctx, userID, templateKey)
+		if err != nil {
+			return nil, fmt.Errorf("checking template habit: %w", err)
+		}
+		if exists {
+			return nil, ErrTemplateHabitAlreadyExists
+		}
+	}
+
 	habit := &models.Habit{
 		UserID:         userID,
 		Title:          req.Title,
@@ -39,6 +54,7 @@ func (s *HabitService) CreateHabit(ctx context.Context, userID string, req model
 		Color:          req.Color,
 		FrequencyType:  req.FrequencyType,
 		FrequencyValue: req.FrequencyValue,
+		TemplateKey:    templateKey,
 		IsArchived:     false,
 	}
 
@@ -115,6 +131,9 @@ func (s *HabitService) UpdateHabit(ctx context.Context, id string, userID string
 	}
 	if req.IsArchived != nil {
 		habit.IsArchived = *req.IsArchived
+	}
+	if req.TemplateKey != nil {
+		habit.TemplateKey = strings.TrimSpace(*req.TemplateKey)
 	}
 
 	if err := s.HabitRepo.Update(ctx, habit); err != nil {

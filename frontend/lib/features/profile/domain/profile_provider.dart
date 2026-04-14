@@ -68,9 +68,9 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
   }
 
   /// Sets the locale and persists the preference.
-  void setLocale(String locale) {
+  Future<void> setLocale(String locale) async {
     state = state.copyWith(locale: locale);
-    _storage.setLocale(locale);
+    await _storage.setLocale(locale);
   }
 }
 

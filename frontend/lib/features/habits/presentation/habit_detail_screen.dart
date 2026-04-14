@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_localized_display.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_week_utils.dart';
+import 'package:habitpal_frontend/features/habits/presentation/habit_user_messages.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/calendar_heatmap.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/edit_habit_dialog.dart';
 import 'package:habitpal_frontend/features/habits/presentation/widgets/streak_celebration_dialog.dart';
@@ -18,9 +22,10 @@ class HabitDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(habitsProvider.select((s) => s.errorMessage), (prev, next) {
       if (next != null) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next),
+            content: Text(displayHabitErrorUserMessage(next, l10n)),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -29,6 +34,7 @@ class HabitDetailScreen extends ConsumerWidget {
 
     final habitsState = ref.watch(habitsProvider);
     final habit = habitsState.habits.where((h) => h.id == habitId).firstOrNull;
+    final l10n = AppLocalizations.of(context)!;
 
     if (habit == null) {
       return Scaffold(
@@ -37,9 +43,23 @@ class HabitDetailScreen extends ConsumerWidget {
       );
     }
 
+    final displayTitle = localizedHabitTitle(habit, l10n);
+    final displayDesc = localizedHabitDescription(habit, l10n);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(habit.name),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/habits');
+            }
+          },
+        ),
+        title: Text(displayTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -89,15 +109,15 @@ class HabitDetailScreen extends ConsumerWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: Text(
-                          habit.name,
+                          displayTitle,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ),
                     ),
-                    if (habit.description.isNotEmpty) ...[
+                    if (displayDesc.isNotEmpty) ...[
                       const SizedBox(height: 8),
                       Text(
-                        habit.description,
+                        displayDesc,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
@@ -132,8 +152,7 @@ class HabitDetailScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     CalendarHeatmap(
-                      completedDates:
-                          habit.completions.map((c) => c.completedAt).toList(),
+                      completedDates: heatmapCompletionDates(habit),
                     ),
                   ],
                 ),
@@ -247,24 +266,23 @@ class _ActionButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Row(
-      children: [
-        Expanded(
-          child: FilledButton.icon(
-            onPressed: () => _showCompleteSheet(context, ref),
-            icon: const Icon(Icons.check),
-            label: const Text('Mark Complete'),
-          ),
+    if (habit.completedToday) {
+      return SizedBox(
+        width: double.infinity,
+        child: FilledButton.icon(
+          onPressed: () => _undoCompletion(ref),
+          icon: const Icon(Icons.undo),
+          label: const Text('Undo today'),
         ),
-        if (habit.completedToday) ...[
-          const SizedBox(width: 12),
-          OutlinedButton.icon(
-            onPressed: () => _undoCompletion(context, ref),
-            icon: const Icon(Icons.undo),
-            label: const Text('Undo'),
-          ),
-        ],
-      ],
+      );
+    }
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: () => _showCompleteSheet(context, ref),
+        icon: const Icon(Icons.check),
+        label: const Text('Mark Complete'),
+      ),
     );
   }
 
@@ -326,22 +344,7 @@ class _ActionButtons extends ConsumerWidget {
     );
   }
 
-  void _undoCompletion(BuildContext context, WidgetRef ref) {
-    // Find the most recent completion for today
-    final now = DateTime.now();
-    final todayCompletions =
-        habit.completions.where((c) {
-            return c.completedAt.year == now.year &&
-                c.completedAt.month == now.month &&
-                c.completedAt.day == now.day;
-          }).toList()
-          ..sort((a, b) => b.completedAt.compareTo(a.completedAt));
-
-    if (todayCompletions.isEmpty) return;
-
-    final lastCompletion = todayCompletions.first;
-    ref
-        .read(habitsProvider.notifier)
-        .uncompleteHabit(habit.id, lastCompletion.id);
+  void _undoCompletion(WidgetRef ref) {
+    ref.read(habitsProvider.notifier).undoTodayCompletion(habit.id);
   }
 }

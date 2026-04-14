@@ -45,18 +45,31 @@ func NewPostgresCompletionRepository(pool *pgxpool.Pool) *PostgresCompletionRepo
 }
 
 // Create inserts a new completion record. The completion's ID and CompletedAt
-// are populated by the database via RETURNING.
+// are populated by the database via RETURNING. If [completion.CompletedAt] is
+// zero, the DB default (NOW()) is used.
 func (r *PostgresCompletionRepository) Create(ctx context.Context, completion *models.HabitCompletion) error {
-	query := `
+	var query string
+	var args []interface{}
+	if completion.CompletedAt.IsZero() {
+		query = `
 		INSERT INTO habit_completions (habit_id, user_id, note)
 		VALUES ($1, $2, $3)
 		RETURNING id, completed_at`
+		args = []interface{}{completion.HabitID, completion.UserID, completion.Note}
+	} else {
+		query = `
+		INSERT INTO habit_completions (habit_id, user_id, note, completed_at)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, completed_at`
+		args = []interface{}{
+			completion.HabitID,
+			completion.UserID,
+			completion.Note,
+			completion.CompletedAt,
+		}
+	}
 
-	err := r.pool.QueryRow(ctx, query,
-		completion.HabitID,
-		completion.UserID,
-		completion.Note,
-	).Scan(&completion.ID, &completion.CompletedAt)
+	err := r.pool.QueryRow(ctx, query, args...).Scan(&completion.ID, &completion.CompletedAt)
 	if err != nil {
 		if isDuplicateKeyError(err) {
 			return ErrDuplicateCompletion
