@@ -1,9 +1,16 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
 
 class StatsState {
-  final double overallCompletionRate;
+  /// Share of active habits completed today (0..1).
+  final double todayCompletionRate;
+
+  /// Share of expected completions met over the last 30 days (0..1, capped).
+  final double last30DaysCompletionRate;
   final int totalCompletions;
   final int activeDays;
   final int totalHabits;
@@ -12,7 +19,8 @@ class StatsState {
   final bool isLoading;
 
   const StatsState({
-    this.overallCompletionRate = 0.0,
+    this.todayCompletionRate = 0.0,
+    this.last30DaysCompletionRate = 0.0,
     this.totalCompletions = 0,
     this.activeDays = 0,
     this.totalHabits = 0,
@@ -22,7 +30,8 @@ class StatsState {
   });
 
   StatsState copyWith({
-    double? overallCompletionRate,
+    double? todayCompletionRate,
+    double? last30DaysCompletionRate,
     int? totalCompletions,
     int? activeDays,
     int? totalHabits,
@@ -31,8 +40,9 @@ class StatsState {
     bool? isLoading,
   }) {
     return StatsState(
-      overallCompletionRate:
-          overallCompletionRate ?? this.overallCompletionRate,
+      todayCompletionRate: todayCompletionRate ?? this.todayCompletionRate,
+      last30DaysCompletionRate:
+          last30DaysCompletionRate ?? this.last30DaysCompletionRate,
       totalCompletions: totalCompletions ?? this.totalCompletions,
       activeDays: activeDays ?? this.activeDays,
       totalHabits: totalHabits ?? this.totalHabits,
@@ -83,11 +93,13 @@ class StatsNotifier extends StateNotifier<StatsState> {
 
     final completedTodayCount =
         activeHabits.where((h) => h.completedToday).length;
-    final completionRate =
-        activeCount > 0 ? completedTodayCount / activeCount : 0.0;
+    final todayRate = activeCount > 0 ? completedTodayCount / activeCount : 0.0;
+
+    final last30Rate = _last30DaysCompletionRate(activeHabits);
 
     state = StatsState(
-      overallCompletionRate: completionRate,
+      todayCompletionRate: todayRate,
+      last30DaysCompletionRate: last30Rate,
       totalCompletions: totalCompletionsAllTime,
       activeDays: distinctDays.length,
       totalHabits: totalHabits,
@@ -95,6 +107,34 @@ class StatsNotifier extends StateNotifier<StatsState> {
       averageStreak: averageStreak,
       isLoading: false,
     );
+  }
+
+  /// Completions in the last 30 days vs. expected, summed across active
+  /// habits. Daily habits expect 30 × targetCount; weekly habits expect
+  /// (30/7) × targetCount. Capped at 1.0.
+  static double _last30DaysCompletionRate(List<HabitModel> activeHabits) {
+    if (activeHabits.isEmpty) return 0.0;
+    final now = DateTime.now();
+    final windowStart = now.subtract(const Duration(days: 30));
+
+    var expected = 0.0;
+    var done = 0.0;
+    for (final h in activeHabits) {
+      final inWindow =
+          h.completions.where((c) {
+            final t = c.completedAt;
+            return t.isAfter(windowStart) && !t.isAfter(now);
+          }).length;
+      done += inWindow.toDouble();
+      final target = h.targetCount.toDouble();
+      if (h.frequency == 'weekly') {
+        expected += (30.0 / 7.0) * target;
+      } else {
+        expected += 30.0 * target;
+      }
+    }
+    if (expected <= 0) return 0.0;
+    return math.min(1.0, done / expected);
   }
 }
 

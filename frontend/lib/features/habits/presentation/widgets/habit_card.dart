@@ -67,21 +67,7 @@ class HabitCard extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: onComplete,
-                      icon: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder:
-                            (child, animation) =>
-                                ScaleTransition(scale: animation, child: child),
-                        child: Icon(
-                          isCompleted ? Icons.check_circle : habitIcon,
-                          key: ValueKey<bool>(isCompleted),
-                          color:
-                              isCompleted
-                                  ? Theme.of(context).colorScheme.primary
-                                  : borderColor,
-                          size: 32,
-                        ),
-                      ),
+                      icon: Icon(habitIcon, color: borderColor, size: 32),
                     ),
                     if (isCompleted)
                       Positioned(
@@ -124,8 +110,9 @@ class HabitCard extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               color:
                                   isCompleted
-                                      ? Theme.of(context).colorScheme.onSurface
-                                          .withAlpha(191)
+                                      ? Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface.withAlpha(191)
                                       : null,
                             ),
                           ),

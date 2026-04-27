@@ -11,6 +11,7 @@ class HabitTemplateTile extends StatelessWidget {
     this.selected = false,
     this.onTap,
     this.trailing,
+
     /// When true, [trailing] is outside the main [InkWell] so taps (e.g. checkbox) do not double-fire.
     this.isolateTrailing = false,
   });
@@ -40,50 +41,56 @@ class HabitTemplateTile extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: isolateTrailing && trailing != null
-            ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: onTap,
-                      borderRadius: BorderRadius.circular(8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: accent.withAlpha(40),
-                            child: Icon(
-                              resolveHabitIcon(meta.iconKey),
-                              color: accent,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(child: _textColumn(context, templateId, l10n)),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  trailing!,
-                ],
-              )
-            : InkWell(
-                onTap: onTap,
-                borderRadius: BorderRadius.circular(12),
-                child: Row(
+        child:
+            isolateTrailing && trailing != null
+                ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      backgroundColor: accent.withAlpha(40),
-                      child: Icon(resolveHabitIcon(meta.iconKey), color: accent),
+                    Expanded(
+                      child: InkWell(
+                        onTap: onTap,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: accent.withAlpha(40),
+                              child: Icon(
+                                resolveHabitIcon(meta.iconKey),
+                                color: accent,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _textColumn(context, templateId, l10n),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(child: _textColumn(context, templateId, l10n)),
-                    if (trailing != null) trailing!,
+                    const SizedBox(width: 8),
+                    trailing!,
                   ],
+                )
+                : InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: accent.withAlpha(40),
+                        child: Icon(
+                          resolveHabitIcon(meta.iconKey),
+                          color: accent,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(child: _textColumn(context, templateId, l10n)),
+                      if (trailing != null) trailing!,
+                    ],
+                  ),
                 ),
-              ),
       ),
     );
   }
@@ -105,9 +112,9 @@ Widget _textColumn(
       const SizedBox(height: 4),
       Text(
         habitTemplateFrequencyLabel(templateId, l10n),
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
       ),
       const SizedBox(height: 4),
       Text(

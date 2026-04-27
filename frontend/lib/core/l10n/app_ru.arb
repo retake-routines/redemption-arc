@@ -136,5 +136,48 @@
   "templateMeditationDesc": "Короткая медитация или дыхание.",
   "templateMeditationFrequency": "Ежедневно · 1 раз",
   "templateAdded": "Привычка добавлена из шаблона",
-  "templateAlreadyExists": "У вас уже есть эта привычка."
+  "templateAlreadyExists": "У вас уже есть эта привычка.",
+  "completionRateToday": "За сегодня",
+  "completionRate30Days": "За 30 дней",
+  "newHabit": "Новая привычка",
+  "titleLabel": "Название",
+  "descriptionOptional": "Описание (необязательно)",
+  "createHabitButton": "Создать привычку",
+  "saveChanges": "Сохранить изменения",
+  "pleaseEnterTitle": "Введите название",
+  "habitDetail": "Привычка",
+  "habitNotFound": "Привычка не найдена",
+  "deleteHabitConfirmTitle": "Удалить эту привычку?",
+  "deleteHabitConfirmBody": "Это безвозвратно удалит привычку и все её отметки.",
+  "recentCompletions": "Последние выполнения",
+  "noCompletionsYet": "Пока нет выполнений",
+  "undoToday": "Отменить за сегодня",
+  "completeHabitTitle": "Отметить привычку",
+  "howDidItGo": "Как всё прошло?",
+  "noteOptional": "Заметка (необязательно)",
+  "complete": "Готово",
+  "targetWithCount": "Цель: {count}",
+  "@targetWithCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "streakDayTitle": "Серия {streak} дней!",
+  "@streakDayTitle": {
+    "placeholders": {
+      "streak": { "type": "int" }
+    }
+  },
+  "keepGoing": "Продолжаем!",
+  "streakMessage7": "Целая неделя! Отличный старт, продолжай!",
+  "streakMessage14": "Две недели подряд! Отличный темп.",
+  "streakMessage30": "Целый месяц! Эта привычка теперь часть тебя.",
+  "streakMessage50": "Полвека постоянства. Легендарно!",
+  "streakMessage100": "Невероятная стойкость! Тебя не остановить!",
+  "daysCount": "{count, plural, one{{count} день} few{{count} дня} many{{count} дней} other{{count} дня}}",
+  "@daysCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  }
 }

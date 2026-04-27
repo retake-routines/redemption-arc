@@ -77,6 +77,7 @@ class _EditHabitDialogState extends ConsumerState<EditHabitDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(
         left: 24,
@@ -90,19 +91,19 @@ class _EditHabitDialogState extends ConsumerState<EditHabitDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Edit Habit', style: Theme.of(context).textTheme.titleLarge),
+            Text(l10n.editHabit, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             TextFormField(
               controller: _titleController,
               autofocus: true,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                prefixIcon: Icon(Icons.edit_outlined),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.titleLabel,
+                prefixIcon: const Icon(Icons.edit_outlined),
+                border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Please enter a title';
+                  return l10n.pleaseEnterTitle;
                 }
                 return null;
               },
@@ -110,24 +111,24 @@ class _EditHabitDialogState extends ConsumerState<EditHabitDialog> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description (optional)',
-                prefixIcon: Icon(Icons.notes_outlined),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.descriptionOptional,
+                prefixIcon: const Icon(Icons.notes_outlined),
+                border: const OutlineInputBorder(),
               ),
               maxLines: 2,
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               value: _frequencyType,
-              decoration: const InputDecoration(
-                labelText: 'Frequency',
-                prefixIcon: Icon(Icons.repeat),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.frequency,
+                prefixIcon: const Icon(Icons.repeat),
+                border: const OutlineInputBorder(),
               ),
-              items: const [
-                DropdownMenuItem(value: 'daily', child: Text('Daily')),
-                DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+              items: [
+                DropdownMenuItem(value: 'daily', child: Text(l10n.daily)),
+                DropdownMenuItem(value: 'weekly', child: Text(l10n.weekly)),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -145,7 +146,7 @@ class _EditHabitDialogState extends ConsumerState<EditHabitDialog> {
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                      : const Text('Save Changes'),
+                      : Text(l10n.saveChanges),
             ),
           ],
         ),

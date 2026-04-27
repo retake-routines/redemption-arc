@@ -14,7 +14,7 @@ class OnboardingFlowState {
 
 class OnboardingNotifier extends StateNotifier<OnboardingFlowState> {
   OnboardingNotifier(this._ref)
-      : super(const OnboardingFlowState(loading: true, needsOnboarding: false)) {
+    : super(const OnboardingFlowState(loading: true, needsOnboarding: false)) {
     _ref.listen<AuthState>(authStateProvider, (_, next) {
       Future.microtask(() => _sync(next));
     });
@@ -47,5 +47,5 @@ class OnboardingNotifier extends StateNotifier<OnboardingFlowState> {
 
 final onboardingFlowProvider =
     StateNotifierProvider<OnboardingNotifier, OnboardingFlowState>((ref) {
-  return OnboardingNotifier(ref);
-});
+      return OnboardingNotifier(ref);
+    });

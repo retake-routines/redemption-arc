@@ -883,6 +883,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You already have this habit.'**
   String get templateAlreadyExists;
+
+  /// No description provided for @completionRateToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s rate'**
+  String get completionRateToday;
+
+  /// No description provided for @completionRate30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get completionRate30Days;
+
+  /// No description provided for @newHabit.
+  ///
+  /// In en, this message translates to:
+  /// **'New Habit'**
+  String get newHabit;
+
+  /// No description provided for @titleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get titleLabel;
+
+  /// No description provided for @descriptionOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get descriptionOptional;
+
+  /// No description provided for @createHabitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Habit'**
+  String get createHabitButton;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @pleaseEnterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title'**
+  String get pleaseEnterTitle;
+
+  /// No description provided for @habitDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Detail'**
+  String get habitDetail;
+
+  /// No description provided for @habitNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit not found'**
+  String get habitNotFound;
+
+  /// No description provided for @deleteHabitConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this habit?'**
+  String get deleteHabitConfirmTitle;
+
+  /// No description provided for @deleteHabitConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently remove the habit and all its completions.'**
+  String get deleteHabitConfirmBody;
+
+  /// No description provided for @recentCompletions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Completions'**
+  String get recentCompletions;
+
+  /// No description provided for @noCompletionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No completions yet'**
+  String get noCompletionsYet;
+
+  /// No description provided for @undoToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo today'**
+  String get undoToday;
+
+  /// No description provided for @completeHabitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Habit'**
+  String get completeHabitTitle;
+
+  /// No description provided for @howDidItGo.
+  ///
+  /// In en, this message translates to:
+  /// **'How did it go?'**
+  String get howDidItGo;
+
+  /// No description provided for @noteOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get noteOptional;
+
+  /// No description provided for @complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get complete;
+
+  /// No description provided for @targetWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Target: {count}'**
+  String targetWithCount(int count);
+
+  /// No description provided for @streakDayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{streak}-Day Streak!'**
+  String streakDayTitle(int streak);
+
+  /// No description provided for @keepGoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Going!'**
+  String get keepGoing;
+
+  /// No description provided for @streakMessage7.
+  ///
+  /// In en, this message translates to:
+  /// **'One week done! Great start, keep it up!'**
+  String get streakMessage7;
+
+  /// No description provided for @streakMessage14.
+  ///
+  /// In en, this message translates to:
+  /// **'Two weeks strong! You are building real momentum.'**
+  String get streakMessage14;
+
+  /// No description provided for @streakMessage30.
+  ///
+  /// In en, this message translates to:
+  /// **'A full month! This habit is part of you now.'**
+  String get streakMessage30;
+
+  /// No description provided for @streakMessage50.
+  ///
+  /// In en, this message translates to:
+  /// **'Half a century of consistency. Legendary!'**
+  String get streakMessage50;
+
+  /// No description provided for @streakMessage100.
+  ///
+  /// In en, this message translates to:
+  /// **'Incredible dedication! You are unstoppable!'**
+  String get streakMessage100;
+
+  /// No description provided for @daysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{count} day} other{{count} days}}'**
+  String daysCount(int count);
 }
 
 class _AppLocalizationsDelegate

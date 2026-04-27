@@ -27,14 +27,14 @@ void main() {
       expect(state.totalHabits, 0);
       expect(state.bestStreak, 0);
       expect(state.averageStreak, 0);
-      expect(state.overallCompletionRate, 0.0);
+      expect(state.todayCompletionRate, 0.0);
       expect(state.isLoading, false);
     });
 
     test('StatsState initial values are all zeros', () {
       const state = StatsState();
 
-      expect(state.overallCompletionRate, 0.0);
+      expect(state.todayCompletionRate, 0.0);
       expect(state.totalCompletions, 0);
       expect(state.activeDays, 0);
       expect(state.totalHabits, 0);
@@ -50,13 +50,13 @@ void main() {
         totalHabits: 5,
         bestStreak: 10,
         averageStreak: 3,
-        overallCompletionRate: 0.75,
+        todayCompletionRate: 0.75,
       );
 
       expect(updated.totalHabits, 5);
       expect(updated.bestStreak, 10);
       expect(updated.averageStreak, 3);
-      expect(updated.overallCompletionRate, 0.75);
+      expect(updated.todayCompletionRate, 0.75);
       expect(updated.totalCompletions, 0);
       expect(updated.isLoading, false);
     });
@@ -153,7 +153,7 @@ void main() {
 
       final state = container.read(statsProvider);
       // 1 of 2 active habits done today
-      expect(state.overallCompletionRate, 0.5);
+      expect(state.todayCompletionRate, 0.5);
       expect(state.totalCompletions, 1);
     });
 
@@ -174,7 +174,7 @@ void main() {
       expect(state.totalHabits, 0);
       expect(state.bestStreak, 0);
       expect(state.averageStreak, 0);
-      expect(state.overallCompletionRate, 0.0);
+      expect(state.todayCompletionRate, 0.0);
       expect(state.totalCompletions, 0);
     });
   });

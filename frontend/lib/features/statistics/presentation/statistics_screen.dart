@@ -97,15 +97,16 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                           value: '${stats.bestStreak}',
                         ),
                         _StatGridCard(
-                          icon: Icons.trending_up,
-                          title: l10n.averageStreak,
-                          value: '${stats.averageStreak}',
+                          icon: Icons.percent,
+                          title: l10n.completionRateToday,
+                          value:
+                              '${(stats.todayCompletionRate * 100).toStringAsFixed(0)}%',
                         ),
                         _StatGridCard(
-                          icon: Icons.percent,
-                          title: l10n.completionRate,
+                          icon: Icons.trending_up,
+                          title: l10n.completionRate30Days,
                           value:
-                              '${(stats.overallCompletionRate * 100).toStringAsFixed(1)}%',
+                              '${(stats.last30DaysCompletionRate * 100).toStringAsFixed(0)}%',
                         ),
                         _StatGridCard(
                           icon: Icons.check_circle,

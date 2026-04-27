@@ -33,7 +33,8 @@ class HabitTemplatesScreen extends ConsumerWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.canPop() ? context.pop() : context.go('/habits'),
+          onPressed:
+              () => context.canPop() ? context.pop() : context.go('/habits'),
         ),
         title: Text(l10n.habitTemplatesTitle),
       ),
@@ -42,9 +43,9 @@ class HabitTemplatesScreen extends ConsumerWidget {
         children: [
           Text(
             l10n.habitTemplatesSubtitle,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
           ...kHabitTemplateIds.map((id) {
@@ -68,9 +69,9 @@ class HabitTemplatesScreen extends ConsumerWidget {
               if (ref.read(habitsProvider).errorMessage != null) return;
               await ref.read(habitsProvider.notifier).loadHabits();
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.templateAdded)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.templateAdded)));
               }
             }
 

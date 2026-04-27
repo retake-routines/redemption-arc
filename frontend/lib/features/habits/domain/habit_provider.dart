@@ -198,8 +198,7 @@ class HabitsNotifier extends StateNotifier<HabitsState> {
   String _friendlyError(Object e) {
     if (e is DioException && e.response?.statusCode == 409) {
       final data = e.response?.data;
-      if (data is Map &&
-          data['error'] == 'template_habit_already_exists') {
+      if (data is Map && data['error'] == 'template_habit_already_exists') {
         return kHabitErrorTemplateAlreadyExists;
       }
     }

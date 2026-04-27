@@ -116,10 +116,17 @@ class AppTheme {
     ),
     chipTheme: ChipThemeData(
       backgroundColor: AppColors.primaryLight.withAlpha(20),
-      labelStyle: const TextStyle(
+      selectedColor: AppColors.primaryLight,
+      checkmarkColor: AppColors.onPrimaryLight,
+      labelStyle: TextStyle(
         fontSize: 13,
-        color: AppColors.primaryLight,
         fontWeight: FontWeight.w500,
+        color: WidgetStateColor.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected)
+                  ? AppColors.onPrimaryLight
+                  : AppColors.primaryLight,
+        ),
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       side: BorderSide.none,
@@ -263,10 +270,17 @@ class AppTheme {
     ),
     chipTheme: ChipThemeData(
       backgroundColor: AppColors.primaryDark.withAlpha(30),
-      labelStyle: const TextStyle(
+      selectedColor: AppColors.primaryDark,
+      checkmarkColor: AppColors.onPrimaryDark,
+      labelStyle: TextStyle(
         fontSize: 13,
-        color: AppColors.primaryDark,
         fontWeight: FontWeight.w500,
+        color: WidgetStateColor.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected)
+                  ? AppColors.onPrimaryDark
+                  : AppColors.primaryDark,
+        ),
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       side: BorderSide.none,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
 
 /// Milestone values that trigger the celebration dialog.
 const _milestones = {7, 14, 30, 50, 100};
@@ -11,7 +12,7 @@ Future<void> showStreakCelebration(BuildContext context, int streak) {
   return showGeneralDialog(
     context: context,
     barrierDismissible: true,
-    barrierLabel: 'Dismiss',
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     barrierColor: Colors.black54,
     transitionDuration: const Duration(milliseconds: 350),
     pageBuilder: (context, animation, secondaryAnimation) {
@@ -32,18 +33,18 @@ class _StreakCelebrationContent extends StatelessWidget {
 
   const _StreakCelebrationContent({required this.streak});
 
-  String get _message {
-    if (streak >= 100) return 'Incredible dedication! You are unstoppable!';
-    if (streak >= 50) return 'Half a century of consistency. Legendary!';
-    if (streak >= 30) return 'A full month! This habit is part of you now.';
-    if (streak >= 14)
-      return 'Two weeks strong! You are building real momentum.';
-    return 'One week done! Great start, keep it up!';
+  String _message(AppLocalizations l10n) {
+    if (streak >= 100) return l10n.streakMessage100;
+    if (streak >= 50) return l10n.streakMessage50;
+    if (streak >= 30) return l10n.streakMessage30;
+    if (streak >= 14) return l10n.streakMessage14;
+    return l10n.streakMessage7;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: AlertDialog(
         icon: Text(
@@ -52,7 +53,7 @@ class _StreakCelebrationContent extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         title: Text(
-          '$streak-Day Streak!',
+          l10n.streakDayTitle(streak),
           textAlign: TextAlign.center,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -60,7 +61,7 @@ class _StreakCelebrationContent extends StatelessWidget {
           ),
         ),
         content: Text(
-          _message,
+          _message(l10n),
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge,
         ),
@@ -68,7 +69,7 @@ class _StreakCelebrationContent extends StatelessWidget {
         actions: [
           FilledButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Keep Going!'),
+            child: Text(l10n.keepGoing),
           ),
         ],
       ),

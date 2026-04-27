@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
 import 'package:habitpal_frontend/core/theme/app_colors.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 
@@ -9,6 +10,7 @@ class StreakCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -18,9 +20,8 @@ class StreakCounter extends StatelessWidget {
               child: _AnimatedStreakItem(
                 icon: Icons.local_fire_department,
                 iconColor: AppColors.streak,
-                label: 'Current Streak',
+                label: l10n.currentStreak,
                 targetValue: streak.currentStreak,
-                suffix: 'days',
               ),
             ),
             Container(
@@ -32,9 +33,8 @@ class StreakCounter extends StatelessWidget {
               child: _AnimatedStreakItem(
                 icon: Icons.emoji_events,
                 iconColor: AppColors.streakGold,
-                label: 'Longest Streak',
+                label: l10n.longestStreak,
                 targetValue: streak.longestStreak,
-                suffix: 'days',
               ),
             ),
           ],
@@ -49,18 +49,17 @@ class _AnimatedStreakItem extends StatelessWidget {
   final Color iconColor;
   final String label;
   final int targetValue;
-  final String suffix;
 
   const _AnimatedStreakItem({
     required this.icon,
     required this.iconColor,
     required this.label,
     required this.targetValue,
-    required this.suffix,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Icon(icon, color: iconColor, size: 32),
@@ -71,7 +70,7 @@ class _AnimatedStreakItem extends StatelessWidget {
           curve: Curves.easeOutCubic,
           builder: (context, value, child) {
             return Text(
-              '${value.toInt()} $suffix',
+              l10n.daysCount(value.toInt()),
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
