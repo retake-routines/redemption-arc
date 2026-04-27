@@ -38,8 +38,8 @@ class HabitDetailScreen extends ConsumerWidget {
 
     if (habit == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Habit Detail')),
-        body: const Center(child: Text('Habit not found')),
+        appBar: AppBar(title: Text(l10n.habitDetail)),
+        body: Center(child: Text(l10n.habitNotFound)),
       );
     }
 
@@ -76,10 +76,9 @@ class HabitDetailScreen extends ConsumerWidget {
             onPressed: () async {
               final confirmed = await showAdaptiveConfirmDialog<bool>(
                 context: context,
-                title: 'Delete this habit?',
-                content:
-                    'This will permanently remove the habit and all its completions.',
-                confirmText: 'Delete',
+                title: l10n.deleteHabitConfirmTitle,
+                content: l10n.deleteHabitConfirmBody,
+                confirmText: l10n.delete,
                 isDestructive: true,
               );
               if (confirmed == true && context.mounted) {
@@ -95,7 +94,7 @@ class HabitDetailScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // --- Habit info card ---
             Card(
@@ -124,9 +123,17 @@ class HabitDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        Chip(label: Text(habit.frequency)),
+                        Chip(
+                          label: Text(
+                            habit.frequency == 'weekly'
+                                ? l10n.weekly
+                                : l10n.daily,
+                          ),
+                        ),
                         const SizedBox(width: 8),
-                        Chip(label: Text('Target: ${habit.targetCount}')),
+                        Chip(
+                          label: Text(l10n.targetWithCount(habit.targetCount)),
+                        ),
                       ],
                     ),
                   ],
@@ -147,7 +154,7 @@ class HabitDetailScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Activity',
+                      l10n.activity,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 16),
@@ -182,6 +189,7 @@ class _RecentCompletions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final sorted = List<CompletionModel>.from(completions)
       ..sort((a, b) => b.completedAt.compareTo(a.completedAt));
     final recent = sorted.take(5).toList();
@@ -192,11 +200,11 @@ class _RecentCompletions extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Recent Completions', style: theme.textTheme.titleMedium),
+            Text(l10n.recentCompletions, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             if (recent.isEmpty)
               Text(
-                'No completions yet',
+                l10n.noCompletionsYet,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -215,17 +223,12 @@ class _CompletionTile extends StatelessWidget {
 
   const _CompletionTile({required this.completion});
 
-  String _formatDate(DateTime dt) {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', //
-    ];
-    return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final formatted = MaterialLocalizations.of(
+      context,
+    ).formatMediumDate(completion.completedAt.toLocal());
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -236,10 +239,7 @@ class _CompletionTile extends StatelessWidget {
             color: theme.colorScheme.primary,
           ),
           const SizedBox(width: 8),
-          Text(
-            _formatDate(completion.completedAt),
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text(formatted, style: theme.textTheme.bodyMedium),
           if (completion.note.isNotEmpty) ...[
             const SizedBox(width: 12),
             Expanded(
@@ -266,13 +266,14 @@ class _ActionButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     if (habit.completedToday) {
       return SizedBox(
         width: double.infinity,
         child: FilledButton.icon(
           onPressed: () => _undoCompletion(ref),
           icon: const Icon(Icons.undo),
-          label: const Text('Undo today'),
+          label: Text(l10n.undoToday),
         ),
       );
     }
@@ -281,12 +282,13 @@ class _ActionButtons extends ConsumerWidget {
       child: FilledButton.icon(
         onPressed: () => _showCompleteSheet(context, ref),
         icon: const Icon(Icons.check),
-        label: const Text('Mark Complete'),
+        label: Text(l10n.markComplete),
       ),
     );
   }
 
   void _showCompleteSheet(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final noteController = TextEditingController();
     showModalBottomSheet(
       context: context,
@@ -304,17 +306,17 @@ class _ActionButtons extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Complete Habit',
+                l10n.completeHabitTitle,
                 style: Theme.of(sheetContext).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: noteController,
-                decoration: const InputDecoration(
-                  hintText: 'How did it go?',
-                  labelText: 'Note (optional)',
-                  prefixIcon: Icon(Icons.notes_outlined),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: l10n.howDidItGo,
+                  labelText: l10n.noteOptional,
+                  prefixIcon: const Icon(Icons.notes_outlined),
+                  border: const OutlineInputBorder(),
                 ),
                 maxLines: 2,
               ),
@@ -335,7 +337,7 @@ class _ActionButtons extends ConsumerWidget {
                     showStreakCelebration(context, streak);
                   }
                 },
-                child: const Text('Complete'),
+                child: Text(l10n.complete),
               ),
             ],
           ),

@@ -112,8 +112,7 @@ class CalendarHeatmap extends StatelessWidget {
                                         : AppColors.heatmapEmpty;
                                 isCompletedFlag = false;
                               } else if (_multiMode) {
-                                final n =
-                                    completionCountByDay![dateOnly] ?? 0;
+                                final n = completionCountByDay![dateOnly] ?? 0;
                                 final total = activeHabitCount!;
                                 if (n <= 0) {
                                   cellColor = AppColors.heatmapMissed;
@@ -125,7 +124,8 @@ class CalendarHeatmap extends StatelessWidget {
                                 isCompletedFlag = n > 0;
                               } else {
                                 isCompletedFlag =
-                                    !isFuture && completedSet.contains(dateOnly);
+                                    !isFuture &&
+                                    completedSet.contains(dateOnly);
                                 cellColor =
                                     isCompletedFlag
                                         ? AppColors.heatmapLevel3
@@ -178,8 +178,7 @@ class CalendarHeatmap extends StatelessWidget {
         children: List.generate(7, (i) {
           final weekday = i + 1;
           final idx = weekday % 7;
-          final label =
-              (i == 0 || i == 2 || i == 4) ? narrows[idx] : '';
+          final label = (i == 0 || i == 2 || i == 4) ? narrows[idx] : '';
           return Padding(
             padding: EdgeInsets.only(top: i > 0 ? _cellGap : 0),
             child: SizedBox(

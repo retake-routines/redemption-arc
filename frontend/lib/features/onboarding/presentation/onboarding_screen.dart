@@ -117,10 +117,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Text(l10n.onboardingSkip),
             ),
           if (_page > 0)
-            TextButton(
-              onPressed: _back,
-              child: Text(l10n.onboardingBack),
-            ),
+            TextButton(onPressed: _back, child: Text(l10n.onboardingBack)),
         ],
       ),
       body: Column(
@@ -205,7 +202,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       _finish();
                     }
                   },
-                  child: Text(_page < 3 ? l10n.onboardingNext : l10n.onboardingStart),
+                  child: Text(
+                    _page < 3 ? l10n.onboardingNext : l10n.onboardingStart,
+                  ),
                 ),
               ),
             ),
@@ -234,17 +233,17 @@ class _WelcomePage extends StatelessWidget {
           Text(
             l10n.onboardingWelcomeTitle,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Text(
             l10n.onboardingWelcomeSubtitle,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -276,16 +275,16 @@ class _ChoicePage extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           subtitle,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 24),
         ...options.map((k) {
@@ -293,9 +292,10 @@ class _ChoicePage extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Material(
-              color: selected
-                  ? Theme.of(context).colorScheme.primaryContainer
-                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              color:
+                  selected
+                      ? Theme.of(context).colorScheme.primaryContainer
+                      : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
               child: InkWell(
                 onTap: () => onSelect(k),
@@ -305,7 +305,9 @@ class _ChoicePage extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(
-                        selected ? Icons.radio_button_checked : Icons.radio_button_off,
+                        selected
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       const SizedBox(width: 12),
@@ -345,23 +347,23 @@ class _HabitsPickPage extends StatelessWidget {
       children: [
         Text(
           l10n.onboardingHabitsTitle,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           l10n.onboardingHabitsSubtitle,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           l10n.onboardingSelectUpToTwo,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 16),
         ...kHabitTemplateIds.map((id) {

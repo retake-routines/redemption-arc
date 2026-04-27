@@ -29,9 +29,7 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
   List<HabitModel> _applyFilter(List<HabitModel> habits) {
     switch (_filter) {
       case _HabitFilter.active:
-        return habits
-            .where((h) => !h.isArchived && !h.completedToday)
-            .toList();
+        return habits.where((h) => !h.isArchived && !h.completedToday).toList();
       case _HabitFilter.doneToday:
         return habits.where((h) => h.completedToday).toList();
       case _HabitFilter.all:
@@ -194,10 +192,7 @@ class _TodayProgressBanner extends StatelessWidget {
   final List<HabitModel> activeHabits;
   final AppLocalizations l10n;
 
-  const _TodayProgressBanner({
-    required this.activeHabits,
-    required this.l10n,
-  });
+  const _TodayProgressBanner({required this.activeHabits, required this.l10n});
 
   @override
   Widget build(BuildContext context) {

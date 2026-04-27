@@ -136,5 +136,48 @@
   "templateMeditationDesc": "A short breathing or meditation session.",
   "templateMeditationFrequency": "Daily · 1×",
   "templateAdded": "Habit added from template",
-  "templateAlreadyExists": "You already have this habit."
+  "templateAlreadyExists": "You already have this habit.",
+  "completionRateToday": "Today's rate",
+  "completionRate30Days": "Last 30 days",
+  "newHabit": "New Habit",
+  "titleLabel": "Title",
+  "descriptionOptional": "Description (optional)",
+  "createHabitButton": "Create Habit",
+  "saveChanges": "Save Changes",
+  "pleaseEnterTitle": "Please enter a title",
+  "habitDetail": "Habit Detail",
+  "habitNotFound": "Habit not found",
+  "deleteHabitConfirmTitle": "Delete this habit?",
+  "deleteHabitConfirmBody": "This will permanently remove the habit and all its completions.",
+  "recentCompletions": "Recent Completions",
+  "noCompletionsYet": "No completions yet",
+  "undoToday": "Undo today",
+  "completeHabitTitle": "Complete Habit",
+  "howDidItGo": "How did it go?",
+  "noteOptional": "Note (optional)",
+  "complete": "Complete",
+  "targetWithCount": "Target: {count}",
+  "@targetWithCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "streakDayTitle": "{streak}-Day Streak!",
+  "@streakDayTitle": {
+    "placeholders": {
+      "streak": { "type": "int" }
+    }
+  },
+  "keepGoing": "Keep Going!",
+  "streakMessage7": "One week done! Great start, keep it up!",
+  "streakMessage14": "Two weeks strong! You are building real momentum.",
+  "streakMessage30": "A full month! This habit is part of you now.",
+  "streakMessage50": "Half a century of consistency. Legendary!",
+  "streakMessage100": "Incredible dedication! You are unstoppable!",
+  "daysCount": "{count, plural, =1{{count} day} other{{count} days}}",
+  "@daysCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  }
 }

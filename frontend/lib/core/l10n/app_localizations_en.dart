@@ -408,4 +408,102 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get templateAlreadyExists => 'You already have this habit.';
+
+  @override
+  String get completionRateToday => 'Today\'s rate';
+
+  @override
+  String get completionRate30Days => 'Last 30 days';
+
+  @override
+  String get newHabit => 'New Habit';
+
+  @override
+  String get titleLabel => 'Title';
+
+  @override
+  String get descriptionOptional => 'Description (optional)';
+
+  @override
+  String get createHabitButton => 'Create Habit';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get pleaseEnterTitle => 'Please enter a title';
+
+  @override
+  String get habitDetail => 'Habit Detail';
+
+  @override
+  String get habitNotFound => 'Habit not found';
+
+  @override
+  String get deleteHabitConfirmTitle => 'Delete this habit?';
+
+  @override
+  String get deleteHabitConfirmBody =>
+      'This will permanently remove the habit and all its completions.';
+
+  @override
+  String get recentCompletions => 'Recent Completions';
+
+  @override
+  String get noCompletionsYet => 'No completions yet';
+
+  @override
+  String get undoToday => 'Undo today';
+
+  @override
+  String get completeHabitTitle => 'Complete Habit';
+
+  @override
+  String get howDidItGo => 'How did it go?';
+
+  @override
+  String get noteOptional => 'Note (optional)';
+
+  @override
+  String get complete => 'Complete';
+
+  @override
+  String targetWithCount(int count) {
+    return 'Target: $count';
+  }
+
+  @override
+  String streakDayTitle(int streak) {
+    return '$streak-Day Streak!';
+  }
+
+  @override
+  String get keepGoing => 'Keep Going!';
+
+  @override
+  String get streakMessage7 => 'One week done! Great start, keep it up!';
+
+  @override
+  String get streakMessage14 =>
+      'Two weeks strong! You are building real momentum.';
+
+  @override
+  String get streakMessage30 => 'A full month! This habit is part of you now.';
+
+  @override
+  String get streakMessage50 => 'Half a century of consistency. Legendary!';
+
+  @override
+  String get streakMessage100 => 'Incredible dedication! You are unstoppable!';
+
+  @override
+  String daysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '$count day',
+    );
+    return '$_temp0';
+  }
 }

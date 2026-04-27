@@ -56,6 +56,7 @@ class HabitModel {
   final String color;
   final String frequency;
   final int targetCount;
+
   /// Stable id when the habit was created from a template (sport, water, …).
   final String templateKey;
   final bool isArchived;
@@ -63,6 +64,7 @@ class HabitModel {
   final DateTime updatedAt;
   final StreakModel streak;
   final List<CompletionModel> completions;
+
   /// Daily: completed on the current calendar day. Weekly: current local week
   /// has at least [targetCount] completions (used by list, banner, filters).
   final bool completedToday;
@@ -289,6 +291,7 @@ class UpdateHabitRequest {
   final String? frequencyType;
   final int? frequencyValue;
   final bool? isArchived;
+
   /// When true, clears [template_key] on the server (habit becomes a custom one for display).
   final bool clearTemplateKey;
 

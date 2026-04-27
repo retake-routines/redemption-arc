@@ -406,4 +406,103 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get templateAlreadyExists => 'У вас уже есть эта привычка.';
+
+  @override
+  String get completionRateToday => 'За сегодня';
+
+  @override
+  String get completionRate30Days => 'За 30 дней';
+
+  @override
+  String get newHabit => 'Новая привычка';
+
+  @override
+  String get titleLabel => 'Название';
+
+  @override
+  String get descriptionOptional => 'Описание (необязательно)';
+
+  @override
+  String get createHabitButton => 'Создать привычку';
+
+  @override
+  String get saveChanges => 'Сохранить изменения';
+
+  @override
+  String get pleaseEnterTitle => 'Введите название';
+
+  @override
+  String get habitDetail => 'Привычка';
+
+  @override
+  String get habitNotFound => 'Привычка не найдена';
+
+  @override
+  String get deleteHabitConfirmTitle => 'Удалить эту привычку?';
+
+  @override
+  String get deleteHabitConfirmBody =>
+      'Это безвозвратно удалит привычку и все её отметки.';
+
+  @override
+  String get recentCompletions => 'Последние выполнения';
+
+  @override
+  String get noCompletionsYet => 'Пока нет выполнений';
+
+  @override
+  String get undoToday => 'Отменить за сегодня';
+
+  @override
+  String get completeHabitTitle => 'Отметить привычку';
+
+  @override
+  String get howDidItGo => 'Как всё прошло?';
+
+  @override
+  String get noteOptional => 'Заметка (необязательно)';
+
+  @override
+  String get complete => 'Готово';
+
+  @override
+  String targetWithCount(int count) {
+    return 'Цель: $count';
+  }
+
+  @override
+  String streakDayTitle(int streak) {
+    return 'Серия $streak дней!';
+  }
+
+  @override
+  String get keepGoing => 'Продолжаем!';
+
+  @override
+  String get streakMessage7 => 'Целая неделя! Отличный старт, продолжай!';
+
+  @override
+  String get streakMessage14 => 'Две недели подряд! Отличный темп.';
+
+  @override
+  String get streakMessage30 => 'Целый месяц! Эта привычка теперь часть тебя.';
+
+  @override
+  String get streakMessage50 => 'Полвека постоянства. Легендарно!';
+
+  @override
+  String get streakMessage100 => 'Невероятная стойкость! Тебя не остановить!';
+
+  @override
+  String daysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count дня',
+      many: '$count дней',
+      few: '$count дня',
+      one: '$count день',
+    );
+    return '$_temp0';
+  }
 }

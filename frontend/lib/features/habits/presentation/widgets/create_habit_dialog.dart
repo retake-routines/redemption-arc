@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:habitpal_frontend/core/l10n/app_localizations.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_model.dart';
 import 'package:habitpal_frontend/features/habits/domain/habit_provider.dart';
 import 'package:habitpal_frontend/shared/utils/habit_icons.dart';
@@ -50,6 +51,7 @@ class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -65,19 +67,19 @@ class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('New Habit', style: theme.textTheme.titleLarge),
+              Text(l10n.newHabit, style: theme.textTheme.titleLarge),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _titleController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  prefixIcon: Icon(Icons.edit_outlined),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.titleLabel,
+                  prefixIcon: const Icon(Icons.edit_outlined),
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a title';
+                    return l10n.pleaseEnterTitle;
                   }
                   return null;
                 },
@@ -85,24 +87,24 @@ class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description (optional)',
-                  prefixIcon: Icon(Icons.notes_outlined),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.descriptionOptional,
+                  prefixIcon: const Icon(Icons.notes_outlined),
+                  border: const OutlineInputBorder(),
                 ),
                 maxLines: 2,
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: _frequencyType,
-                decoration: const InputDecoration(
-                  labelText: 'Frequency',
-                  prefixIcon: Icon(Icons.repeat),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.frequency,
+                  prefixIcon: const Icon(Icons.repeat),
+                  border: const OutlineInputBorder(),
                 ),
-                items: const [
-                  DropdownMenuItem(value: 'daily', child: Text('Daily')),
-                  DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+                items: [
+                  DropdownMenuItem(value: 'daily', child: Text(l10n.daily)),
+                  DropdownMenuItem(value: 'weekly', child: Text(l10n.weekly)),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -112,7 +114,7 @@ class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
               ),
               const SizedBox(height: 16),
               // Color picker
-              Text('Color', style: theme.textTheme.titleSmall),
+              Text(l10n.habitColor, style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               _ColorPicker(
                 selectedHex: _selectedColor,
@@ -122,7 +124,7 @@ class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
               ),
               const SizedBox(height: 16),
               // Icon picker
-              Text('Icon', style: theme.textTheme.titleSmall),
+              Text(l10n.habitIcon, style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               _IconPicker(
                 selectedIcon: _selectedIcon,
@@ -141,7 +143,7 @@ class _CreateHabitDialogState extends ConsumerState<CreateHabitDialog> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                        : const Text('Create Habit'),
+                        : Text(l10n.createHabitButton),
               ),
             ],
           ),
